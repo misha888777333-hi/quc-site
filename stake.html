@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Стейкинг QUC</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="stake.html" class="active">Стейкинг</a>
+    <a href="mint.html">Минт NFT</a>
+  </nav>
+
+  <div style="text-align:center; margin-bottom: 32px;">
+    <h1>Quantum Staking</h1>
+    <p>Заморозьте QUC и получайте награду в QUC со временем — чем больше<br/>
+    застейкано и дольше держится, тем больше ваша доля от призового фонда.</p>
+  </div>
+
+  <div class="card">
+    <button id="connectBtn">Подключить MetaMask</button>
+    <div class="stat"><span>Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat"><span>Сеть (chainId)</span><span id="chainId">—</span></div>
+    <p class="warn" id="networkWarn"></p>
+    <div class="stat"><span>Баланс QUC в кошельке</span><span id="walletBalance">—</span></div>
+    <div class="stat"><span>Мой застейканный QUC</span><span id="myStaked">—</span></div>
+    <div class="stat"><span>Моя накопленная награда</span><span id="myEarned">—</span></div>
+    <div class="stat"><span>Всего застейкано всеми</span><span id="totalStaked">—</span></div>
+    <div class="stat"><span>Награды выплачиваются до</span><span id="periodFinish">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Застейкать</h2>
+    <label>Сколько QUC застейкать</label>
+    <input id="stakeAmount" placeholder="Например: 1000" />
+    <button id="stakeBtn">Застейкать</button>
+  </div>
+
+  <div class="card">
+    <h2>Снять / забрать награду</h2>
+    <label>Сколько QUC снять из стейка</label>
+    <input id="withdrawAmount" placeholder="Например: 500" />
+    <button id="withdrawBtn">Снять</button>
+    <button id="claimBtn">Забрать награду</button>
+    <button id="exitBtn">Снять всё и забрать награду</button>
+  </div>
+
+  <div id="log">Ожидание действий...</div>
+
+  <footer>Quantum Universe Coin · Staking</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
+const STAKING_ADDRESS = "0x98F3f129FeaA9dcb75efadd99F7b43c482045a85";
+const EXPECTED_CHAIN_ID = 56n;
+
+const TOKEN_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+  "function approve(address,uint256) returns (bool)",
+  "function allowance(address,address) view returns (uint256)"
+];
+const STAKING_ABI = [
+  "function stake(uint256) external",
+  "function withdraw(uint256) external",
+  "function claimReward() external",
+  "function exit() external",
+  "function balanceOf(address) view returns (uint256)",
+  "function earned(address) view returns (uint256)",
+  "function totalStaked() view returns (uint256)",
+  "function periodFinish() view returns (uint256)"
+];
+
+const log = (msg) => { document.getElementById("log").textContent = msg; };
+let provider, signer, token, staking, myAddress;
+
+async function refreshInfo() {
+  const network = await provider.getNetwork();
+  document.getElementById("chainId").textContent = network.chainId.toString();
+  document.getElementById("networkWarn").textContent =
+    network.chainId === EXPECTED_CHAIN_ID ? "" : "⚠ переключите MetaMask на BNB Smart Chain (mainnet, 56)";
+
+  const [walletBal, staked, earned, total, finish] = await Promise.all([
+    token.balanceOf(myAddress),
+    staking.balanceOf(myAddress),
+    staking.earned(myAddress),
+    staking.totalStaked(),
+    staking.periodFinish()
+  ]);
+  document.getElementById("walletBalance").textContent = ethers.formatUnits(walletBal, 18) + " QUC";
+  document.getElementById("myStaked").textContent = ethers.formatUnits(staked, 18) + " QUC";
+  document.getElementById("myEarned").textContent = ethers.formatUnits(earned, 18) + " QUC";
+  document.getElementById("totalStaked").textContent = ethers.formatUnits(total, 18) + " QUC";
+  document.getElementById("periodFinish").textContent = new Date(Number(finish) * 1000).toLocaleString();
+}
+
+document.getElementById("connectBtn").onclick = async () => {
+  if (!window.ethereum) { log("MetaMask не найден в этом браузере."); return; }
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  myAddress = await signer.getAddress();
+  document.getElementById("account").textContent = myAddress.slice(0,6) + "..." + myAddress.slice(-4);
+  token = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+  staking = new ethers.Contract(STAKING_ADDRESS, STAKING_ABI, signer);
+  await refreshInfo();
+  log("Кошелёк подключен: " + myAddress);
+};
+
+document.getElementById("stakeBtn").onclick = async () => {
+  if (!staking) { log("Сначала подключите MetaMask."); return; }
+  const amountStr = document.getElementById("stakeAmount").value.trim();
+  if (!amountStr) { log("Укажите количество."); return; }
+  try {
+    const amountWei = ethers.parseUnits(amountStr, 18);
+    const allowance = await token.allowance(myAddress, STAKING_ADDRESS);
+    if (allowance < amountWei) {
+      log("Разрешаю контракту списывать QUC, подтвердите в MetaMask...");
+      const approveTx = await token.approve(STAKING_ADDRESS, amountWei);
+      await approveTx.wait();
+    }
+    log("Стейкаю " + amountStr + " QUC, подтвердите в MetaMask...");
+    const tx = await staking.stake(amountWei);
+    await tx.wait();
+    log("Готово! Застейкано " + amountStr + " QUC.");
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+
+document.getElementById("withdrawBtn").onclick = async () => {
+  if (!staking) { log("Сначала подключите MetaMask."); return; }
+  const amountStr = document.getElementById("withdrawAmount").value.trim();
+  if (!amountStr) { log("Укажите количество."); return; }
+  try {
+    const amountWei = ethers.parseUnits(amountStr, 18);
+    log("Снимаю " + amountStr + " QUC из стейка, подтвердите в MetaMask...");
+    const tx = await staking.withdraw(amountWei);
+    await tx.wait();
+    log("Готово! Снято " + amountStr + " QUC.");
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+
+document.getElementById("claimBtn").onclick = async () => {
+  if (!staking) { log("Сначала подключите MetaMask."); return; }
+  try {
+    log("Забираю награду, подтвердите в MetaMask...");
+    const tx = await staking.claimReward();
+    await tx.wait();
+    log("Готово! Награда получена.");
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+
+document.getElementById("exitBtn").onclick = async () => {
+  if (!staking) { log("Сначала подключите MetaMask."); return; }
+  try {
+    log("Снимаю весь стейк и забираю награду, подтвердите в MetaMask...");
+    const tx = await staking.exit();
+    await tx.wait();
+    log("Готово! Стейк и награда получены обратно в кошелёк.");
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+</script>
+</body>
+</html>

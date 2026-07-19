@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Минт Quantum Particle — QUC</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="stake.html">Стейкинг</a>
+    <a href="mint.html" class="active">Минт NFT</a>
+  </nav>
+
+  <div style="text-align:center; margin-bottom: 32px;">
+    <h1>Burn → Mint</h1>
+    <p>Сожгите QUC — получите уникальную квантовую частицу. Часть суммы сгорает<br/>
+    навсегда, часть уходит создателю проекта. Тип и редкость — случайны.</p>
+  </div>
+
+  <div class="card">
+    <button id="connectBtn">Подключить MetaMask</button>
+    <div class="stat"><span>Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat"><span>Сеть (chainId)</span><span id="chainId">—</span></div>
+    <p class="warn" id="networkWarn"></p>
+    <div class="stat"><span>Мой баланс QUC</span><span id="myBalance">—</span></div>
+    <div class="stat"><span>Стоимость минта</span><span id="totalCost">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Заминтить частицу</h2>
+    <button id="mintBtn">Сжечь QUC и заминтить NFT</button>
+    <div id="result" class="result-card"></div>
+  </div>
+
+  <div id="log">Ожидание действий...</div>
+
+  <footer>Quantum Universe Coin · Quantum Particle NFT</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
+const NFT_ADDRESS = "0xA811bf4d626B18529771D5dFbA7Fc8c0416693F5";
+const EXPECTED_CHAIN_ID = 56n;
+
+const TOKEN_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+  "function approve(address,uint256) returns (bool)",
+  "function allowance(address,address) view returns (uint256)"
+];
+const NFT_ABI = [
+  "function mint() returns (uint256)",
+  "function totalCost() view returns (uint256)",
+  "function tokenURI(uint256) view returns (string)",
+  "event ParticleMinted(address indexed to, uint256 indexed tokenId, uint8 particleType, uint8 rarity)"
+];
+
+const log = (msg) => { document.getElementById("log").textContent = msg; };
+let provider, signer, myAddress, token, nft;
+
+async function refreshInfo() {
+  const network = await provider.getNetwork();
+  document.getElementById("chainId").textContent = network.chainId.toString();
+  document.getElementById("networkWarn").textContent =
+    network.chainId === EXPECTED_CHAIN_ID ? "" : "⚠ переключите MetaMask на BNB Smart Chain (mainnet, 56)";
+
+  const [balance, cost] = await Promise.all([token.balanceOf(myAddress), nft.totalCost()]);
+  document.getElementById("myBalance").textContent = ethers.formatUnits(balance, 18) + " QUC";
+  document.getElementById("totalCost").textContent = ethers.formatUnits(cost, 18) + " QUC";
+}
+
+document.getElementById("connectBtn").onclick = async () => {
+  if (!window.ethereum) { log("MetaMask не найден в этом браузере."); return; }
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  myAddress = await signer.getAddress();
+  document.getElementById("account").textContent = myAddress.slice(0,6) + "..." + myAddress.slice(-4);
+  token = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+  nft = new ethers.Contract(NFT_ADDRESS, NFT_ABI, signer);
+  await refreshInfo();
+  log("Кошелёк подключен: " + myAddress);
+};
+
+document.getElementById("mintBtn").onclick = async () => {
+  if (!nft) { log("Сначала подключите MetaMask."); return; }
+  try {
+    const cost = await nft.totalCost();
+    const allowance = await token.allowance(myAddress, NFT_ADDRESS);
+    if (allowance < cost) {
+      log("Разрешаю контракту сжигать QUC, подтвердите в MetaMask...");
+      const approveTx = await token.approve(NFT_ADDRESS, cost);
+      await approveTx.wait();
+    }
+
+    log("Сжигаю " + ethers.formatUnits(cost, 18) + " QUC и минчу NFT, подтвердите в MetaMask...");
+    const tx = await nft.mint({ gasLimit: 400000n });
+    const receipt = await tx.wait();
+
+    const mintEvent = receipt.logs
+      .map(l => { try { return nft.interface.parseLog(l); } catch { return null; } })
+      .find(e => e && e.name === "ParticleMinted");
+    const tokenId = mintEvent.args.tokenId;
+
+    const uri = await nft.tokenURI(tokenId);
+    const json = JSON.parse(atob(uri.split(",")[1]));
+
+    document.getElementById("result").innerHTML =
+      "<h3>" + json.name + "</h3>" +
+      "<img src='" + json.image + "' width='300' height='300' />" +
+      "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>";
+
+    log("Готово! Заминчен " + json.name + ".");
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+</script>
+</body>
+</html>
