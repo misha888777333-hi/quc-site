@@ -15,10 +15,25 @@
     <a href="mint.html" class="active">Минт NFT</a>
   </nav>
 
-  <div style="text-align:center; margin-bottom: 32px;">
+  <div style="text-align:center; margin-bottom: 12px;">
     <h1>Burn → Mint</h1>
     <p>Сожгите QUC — получите уникальную квантовую частицу. Часть суммы сгорает<br/>
     навсегда, часть уходит создателю проекта. Тип и редкость — случайны.</p>
+    <button id="helpBtn" class="help-btn">❓ Как это работает?</button>
+  </div>
+
+  <div id="tutorialOverlay" class="tutorial-overlay" style="display:none;">
+    <div class="tutorial-card">
+      <div class="tutorial-emoji" id="tutEmoji"></div>
+      <h3 id="tutTitle"></h3>
+      <p id="tutText"></p>
+      <div class="tutorial-dots" id="tutDots"></div>
+      <div class="tutorial-nav">
+        <button id="tutPrev">← Назад</button>
+        <button id="tutNext">Дальше →</button>
+      </div>
+      <button id="tutSkip" class="tutorial-skip">Пропустить</button>
+    </div>
   </div>
 
   <div class="card">
@@ -94,6 +109,85 @@ const NFT_ABI = [
 
 const log = (msg) => { document.getElementById("log").textContent = msg; };
 let provider, signer, myAddress, token, nft;
+
+const TUTORIAL_STEPS = [
+  {
+    emoji: "🪙",
+    title: "Что такое QUC?",
+    text: "Представь, что QUC — это волшебные звёздные монетки. Они лежат в твоём кошельке — это как копилка, только в интернете, и её видишь только ты."
+  },
+  {
+    emoji: "🔥",
+    title: "Что значит «сжечь»?",
+    text: "Если бросить монетки в волшебную печку — они исчезают навсегда! Но взамен из дыма появляется что-то новое и интересное."
+  },
+  {
+    emoji: "✨",
+    title: "Что появляется из печки?",
+    text: "Появляется частица — маленький кусочек квантовой вселенной. У каждой частицы есть тип (Electron, Proton, Neutron или Photon) и редкость."
+  },
+  {
+    emoji: "🌈",
+    title: "Что такое редкость?",
+    text: "Это как карточки в коллекции! Common встречается часто (60 из 100 раз), а золотую Legendary найти очень трудно — всего 3 раза из 100. Чем реже — тем круче!"
+  },
+  {
+    emoji: "⚗️",
+    title: "А что такое Fusion?",
+    text: "Если у тебя есть две одинаковые по редкости частицы — можно слить их вместе во второй печке! Есть шанс 50%, что получится частица более высокой редкости."
+  },
+  {
+    emoji: "🔒",
+    title: "А кошелёк — это безопасно?",
+    text: "Кошелёк (MetaMask и похожие) — это твой личный сейф, куда никто, кроме тебя, зайти не может. Подключаешь его к сайту — как показываешь пропуск, чтобы поиграть, а не отдаёшь ключи от сейфа."
+  },
+  {
+    emoji: "🚀",
+    title: "Готов начать?",
+    text: "Подключай кошелёк, жми «Сжечь QUC и заминтить NFT» — и смотри, какая частица тебе выпадет! Удачи, исследователь квантовой вселенной!"
+  }
+];
+let tutStep = 0;
+
+function renderTutorialStep() {
+  const s = TUTORIAL_STEPS[tutStep];
+  document.getElementById("tutEmoji").textContent = s.emoji;
+  document.getElementById("tutTitle").textContent = s.title;
+  document.getElementById("tutText").textContent = s.text;
+  document.getElementById("tutDots").innerHTML = TUTORIAL_STEPS.map((_, i) =>
+    "<span class='" + (i === tutStep ? "on" : "") + "'></span>"
+  ).join("");
+  document.getElementById("tutPrev").style.visibility = tutStep === 0 ? "hidden" : "visible";
+  document.getElementById("tutNext").textContent = tutStep === TUTORIAL_STEPS.length - 1 ? "Погнали! 🚀" : "Дальше →";
+}
+
+function openTutorial() {
+  tutStep = 0;
+  renderTutorialStep();
+  document.getElementById("tutorialOverlay").style.display = "flex";
+}
+
+function closeTutorial() {
+  document.getElementById("tutorialOverlay").style.display = "none";
+  localStorage.setItem("quc_tutorial_seen", "1");
+}
+
+document.getElementById("helpBtn").onclick = openTutorial;
+document.getElementById("tutSkip").onclick = closeTutorial;
+document.getElementById("tutNext").onclick = () => {
+  if (tutStep === TUTORIAL_STEPS.length - 1) { closeTutorial(); return; }
+  tutStep++;
+  renderTutorialStep();
+};
+document.getElementById("tutPrev").onclick = () => {
+  if (tutStep === 0) return;
+  tutStep--;
+  renderTutorialStep();
+};
+
+if (!localStorage.getItem("quc_tutorial_seen")) {
+  openTutorial();
+}
 
 function playChime(rarity) {
   try {
