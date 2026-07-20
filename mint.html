@@ -22,7 +22,7 @@
   </div>
 
   <div class="card">
-    <button id="connectBtn">Подключить MetaMask</button>
+    <button id="connectBtn">Подключить кошелёк</button>
     <div class="stat"><span>Аккаунт</span><span id="account">не подключен</span></div>
     <div class="stat"><span>Сеть (chainId)</span><span id="chainId">—</span></div>
     <p class="warn" id="networkWarn"></p>
@@ -34,6 +34,19 @@
     <h2>Заминтить частицу</h2>
     <button id="mintBtn">Сжечь QUC и заминтить NFT</button>
     <div id="result" class="result-card"></div>
+  </div>
+
+  <div class="card">
+    <h2>Fusion — слияние частиц</h2>
+    <p>Слейте две своих частицы <b>одинаковой редкости</b> — получите одну новую,
+    с шансом на повышение редкости. Стоимость fusion — <span id="fusionCost">—</span>.
+    ID своих частиц смотрите в результате минта выше или в MetaMask (вкладка NFT).</p>
+    <label>ID первой частицы</label>
+    <input id="fuseId1" placeholder="Например: 0" />
+    <label>ID второй частицы</label>
+    <input id="fuseId2" placeholder="Например: 2" />
+    <button id="fuseBtn">Слить частицы</button>
+    <div id="fuseResult" class="result-card"></div>
   </div>
 
   <div id="log">Ожидание действий...</div>
@@ -54,9 +67,12 @@ const TOKEN_ABI = [
 ];
 const NFT_ABI = [
   "function mint() returns (uint256)",
+  "function fuse(uint256,uint256) returns (uint256)",
   "function totalCost() view returns (uint256)",
+  "function fusionTotalCost() view returns (uint256)",
   "function tokenURI(uint256) view returns (string)",
-  "event ParticleMinted(address indexed to, uint256 indexed tokenId, uint8 particleType, uint8 rarity)"
+  "event ParticleMinted(address indexed to, uint256 indexed tokenId, uint8 particleType, uint8 rarity)",
+  "event ParticlesFused(address indexed user, uint256 tokenId1, uint256 tokenId2, uint256 indexed newTokenId, uint8 newRarity, bool upgraded)"
 ];
 
 const log = (msg) => { document.getElementById("log").textContent = msg; };
@@ -68,9 +84,12 @@ async function refreshInfo() {
   document.getElementById("networkWarn").textContent =
     network.chainId === EXPECTED_CHAIN_ID ? "" : "⚠ переключите MetaMask на BNB Smart Chain (mainnet, 56)";
 
-  const [balance, cost] = await Promise.all([token.balanceOf(myAddress), nft.totalCost()]);
+  const [balance, cost, fusionCost] = await Promise.all([
+    token.balanceOf(myAddress), nft.totalCost(), nft.fusionTotalCost()
+  ]);
   document.getElementById("myBalance").textContent = ethers.formatUnits(balance, 18) + " QUC";
   document.getElementById("totalCost").textContent = ethers.formatUnits(cost, 18) + " QUC";
+  document.getElementById("fusionCost").textContent = ethers.formatUnits(fusionCost, 18) + " QUC";
 }
 
 document.getElementById("connectBtn").onclick = async () => {
@@ -115,6 +134,45 @@ document.getElementById("mintBtn").onclick = async () => {
       "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>";
 
     log("Готово! Заминчен " + json.name + ".");
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+
+document.getElementById("fuseBtn").onclick = async () => {
+  if (!nft) { log("Сначала подключите MetaMask."); return; }
+  const id1 = document.getElementById("fuseId1").value.trim();
+  const id2 = document.getElementById("fuseId2").value.trim();
+  if (id1 === "" || id2 === "") { log("Укажите оба ID частиц."); return; }
+  try {
+    const cost = await nft.fusionTotalCost();
+    const allowance = await token.allowance(myAddress, NFT_ADDRESS);
+    if (allowance < cost) {
+      log("Разрешаю контракту сжигать QUC для fusion, подтвердите в MetaMask...");
+      const approveTx = await token.approve(NFT_ADDRESS, cost);
+      await approveTx.wait();
+    }
+
+    log("Сливаю частицы #" + id1 + " и #" + id2 + ", подтвердите в MetaMask...");
+    const tx = await nft.fuse(id1, id2, { gasLimit: 400000n });
+    const receipt = await tx.wait();
+
+    const fuseEvent = receipt.logs
+      .map(l => { try { return nft.interface.parseLog(l); } catch { return null; } })
+      .find(e => e && e.name === "ParticlesFused");
+    const newTokenId = fuseEvent.args.newTokenId;
+    const upgraded = fuseEvent.args.upgraded;
+
+    const uri = await nft.tokenURI(newTokenId);
+    const json = JSON.parse(atob(uri.split(",")[1]));
+
+    document.getElementById("fuseResult").innerHTML =
+      "<h3>" + json.name + (upgraded ? " ⬆ Апгрейд!" : "") + "</h3>" +
+      "<img src='" + json.image + "' width='300' height='300' />" +
+      "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>";
+
+    log("Готово! Получена новая частица #" + newTokenId + (upgraded ? " — редкость повышена!" : " — редкость осталась прежней."));
     await refreshInfo();
   } catch (err) {
     log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
