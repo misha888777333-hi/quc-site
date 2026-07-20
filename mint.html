@@ -32,21 +32,36 @@
 
   <div class="card">
     <h2>Заминтить частицу</h2>
+    <div class="odds-row">
+      <div class="odds-pill odds-common"><span class="pct">60%</span>Common</div>
+      <div class="odds-pill odds-rare"><span class="pct">25%</span>Rare</div>
+      <div class="odds-pill odds-epic"><span class="pct">12%</span>Epic</div>
+      <div class="odds-pill odds-legendary"><span class="pct">3%</span>Legendary</div>
+    </div>
     <button id="mintBtn">Сжечь QUC и заминтить NFT</button>
-    <div id="result" class="result-card"></div>
+    <div id="result" class="reveal-box"></div>
   </div>
 
   <div class="card">
     <h2>Fusion — слияние частиц</h2>
     <p>Слейте две своих частицы <b>одинаковой редкости</b> — получите одну новую,
-    с шансом на повышение редкости. Стоимость fusion — <span id="fusionCost">—</span>.
+    с шансом <b>50%</b> на повышение редкости. Стоимость fusion — <span id="fusionCost">—</span>.
     ID своих частиц смотрите в результате минта выше или в MetaMask (вкладка NFT).</p>
     <label>ID первой частицы</label>
     <input id="fuseId1" placeholder="Например: 0" />
     <label>ID второй частицы</label>
     <input id="fuseId2" placeholder="Например: 2" />
     <button id="fuseBtn">Слить частицы</button>
-    <div id="fuseResult" class="result-card"></div>
+    <div id="fuseResult" class="reveal-box"></div>
+  </div>
+
+  <div class="card">
+    <h2>Недавние выпадения</h2>
+    <p style="font-size:13px;">Публичные RPC режут live-запросы истории блокчейна,
+    поэтому лента выпадений — прямая ссылка на события контракта в BscScan
+    (обновляется в реальном времени):</p>
+    <a href="https://bscscan.com/address/0x5E7abD403A71E94a2c16746bD42F603a2A098c14#events"
+       target="_blank" rel="noopener" style="color: var(--teal);">Смотреть все Mint и Fusion события →</a>
   </div>
 
   <div id="log">Ожидание действий...</div>
@@ -59,6 +74,8 @@
 const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
 const NFT_ADDRESS = "0x5E7abD403A71E94a2c16746bD42F603a2A098c14";
 const EXPECTED_CHAIN_ID = 56n;
+const RARITY_NAMES = ["Common", "Rare", "Epic", "Legendary"];
+const RARITY_CLASS = ["odds-common", "odds-rare", "odds-epic", "odds-legendary"];
 
 const TOKEN_ABI = [
   "function balanceOf(address) view returns (uint256)",
@@ -77,6 +94,42 @@ const NFT_ABI = [
 
 const log = (msg) => { document.getElementById("log").textContent = msg; };
 let provider, signer, myAddress, token, nft;
+
+function playChime(rarity) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const freqs = rarity >= 3 ? [523, 659, 784, 1047] : rarity >= 2 ? [523, 659, 784] : [440, 554];
+    freqs.forEach((f, i) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.frequency.value = f;
+      o.type = "sine";
+      g.gain.setValueAtTime(0.001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + i * 0.12 + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.35);
+      o.connect(g).connect(ctx.destination);
+      o.start(ctx.currentTime + i * 0.12);
+      o.stop(ctx.currentTime + i * 0.12 + 0.4);
+    });
+  } catch (e) {}
+}
+
+async function reveal(containerId, actionPromise) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '<div class="reveal-spin"></div>';
+  const [json, extra] = await actionPromise;
+  await new Promise(r => setTimeout(r, 900));
+  const rarity = json.attributes.find(a => a.trait_type === "Rarity").value;
+  const rarityIdx = RARITY_NAMES.indexOf(rarity);
+  const rarityClass = rarityIdx >= 2 ? (rarityIdx === 3 ? "legendary" : "epic") : "";
+  el.innerHTML =
+    '<div class="reveal-pop ' + rarityClass + '" style="text-align:center;">' +
+    "<h3>" + json.name + (extra || "") + "</h3>" +
+    "<img src='" + json.image + "' width='260' height='260' />" +
+    "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>" +
+    "</div>";
+  playChime(rarityIdx);
+}
 
 async function refreshInfo() {
   const network = await provider.getNetwork();
@@ -118,22 +171,19 @@ document.getElementById("mintBtn").onclick = async () => {
 
     log("Сжигаю " + ethers.formatUnits(cost, 18) + " QUC и минчу NFT, подтвердите в MetaMask...");
     const tx = await nft.mint({ gasLimit: 400000n });
-    const receipt = await tx.wait();
 
-    const mintEvent = receipt.logs
-      .map(l => { try { return nft.interface.parseLog(l); } catch { return null; } })
-      .find(e => e && e.name === "ParticleMinted");
-    const tokenId = mintEvent.args.tokenId;
+    await reveal("result", (async () => {
+      const receipt = await tx.wait();
+      const mintEvent = receipt.logs
+        .map(l => { try { return nft.interface.parseLog(l); } catch { return null; } })
+        .find(e => e && e.name === "ParticleMinted");
+      const tokenId = mintEvent.args.tokenId;
+      const uri = await nft.tokenURI(tokenId);
+      const json = JSON.parse(atob(uri.split(",")[1]));
+      return [json, null];
+    })());
 
-    const uri = await nft.tokenURI(tokenId);
-    const json = JSON.parse(atob(uri.split(",")[1]));
-
-    document.getElementById("result").innerHTML =
-      "<h3>" + json.name + "</h3>" +
-      "<img src='" + json.image + "' width='300' height='300' />" +
-      "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>";
-
-    log("Готово! Заминчен " + json.name + ".");
+    log("Готово!");
     await refreshInfo();
   } catch (err) {
     log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
@@ -156,28 +206,26 @@ document.getElementById("fuseBtn").onclick = async () => {
 
     log("Сливаю частицы #" + id1 + " и #" + id2 + ", подтвердите в MetaMask...");
     const tx = await nft.fuse(id1, id2, { gasLimit: 400000n });
-    const receipt = await tx.wait();
 
-    const fuseEvent = receipt.logs
-      .map(l => { try { return nft.interface.parseLog(l); } catch { return null; } })
-      .find(e => e && e.name === "ParticlesFused");
-    const newTokenId = fuseEvent.args.newTokenId;
-    const upgraded = fuseEvent.args.upgraded;
+    await reveal("fuseResult", (async () => {
+      const receipt = await tx.wait();
+      const fuseEvent = receipt.logs
+        .map(l => { try { return nft.interface.parseLog(l); } catch { return null; } })
+        .find(e => e && e.name === "ParticlesFused");
+      const newTokenId = fuseEvent.args.newTokenId;
+      const upgraded = fuseEvent.args.upgraded;
+      const uri = await nft.tokenURI(newTokenId);
+      const json = JSON.parse(atob(uri.split(",")[1]));
+      return [json, upgraded ? " ⬆ Апгрейд!" : ""];
+    })());
 
-    const uri = await nft.tokenURI(newTokenId);
-    const json = JSON.parse(atob(uri.split(",")[1]));
-
-    document.getElementById("fuseResult").innerHTML =
-      "<h3>" + json.name + (upgraded ? " ⬆ Апгрейд!" : "") + "</h3>" +
-      "<img src='" + json.image + "' width='300' height='300' />" +
-      "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>";
-
-    log("Готово! Получена новая частица #" + newTokenId + (upgraded ? " — редкость повышена!" : " — редкость осталась прежней."));
+    log("Готово!");
     await refreshInfo();
   } catch (err) {
     log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
   }
 };
+
 </script>
 </body>
 </html>
