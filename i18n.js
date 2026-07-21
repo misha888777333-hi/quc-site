@@ -1,0 +1,374 @@
+const TRANSLATIONS = {
+ru: {
+  "nav.home": "Главная", "nav.stake": "Стейкинг", "nav.mint": "Минт NFT",
+
+  "index.title": "Quantum Universe Coin",
+  "index.subtitle": "Токен QUC на BNB Smart Chain — с реальным стейкингом и NFT-частицами, рождающимися из сожжённой энергии токена.",
+  "index.feature.trade.title": "Купить / обменять",
+  "index.feature.trade.text": "Торгуйте QUC на PancakeSwap за BNB.",
+  "index.feature.stake.title": "Стейкинг",
+  "index.feature.stake.text": "Заморозьте QUC и получайте награду со временем.",
+  "index.feature.mint.title": "Burn-to-mint NFT",
+  "index.feature.mint.text": "Сожгите QUC — получите уникальную квантовую частицу.",
+  "index.howtobuy.title": "Как купить QUC",
+  "index.howtobuy.intro": "Работает с любым криптокошельком — не только с MetaMask. Выберите удобный способ:",
+  "index.howtobuy.step1.title": "1. Через PancakeSwap",
+  "index.howtobuy.step1.pre": "Зайдите на",
+  "index.howtobuy.step1.link": "страницу обмена",
+  "index.howtobuy.step1.post": "и подключите любой кошелёк: MetaMask, Trust Wallet, Coinbase Wallet, Rabby, Binance Wallet, OKX Wallet и другие — все стандартные крипто-кошельки подходят.",
+  "index.howtobuy.step2.title": "2. Прямо на этом сайте",
+  "index.howtobuy.step2.text": "Кнопки «Подключить кошелёк» на страницах Стейкинг и Минт NFT тоже работают с любым браузерным кошельком, не только MetaMask.",
+  "index.howtobuy.step3.title": "3. С телефона",
+  "index.howtobuy.step3.text": "Если у вас мобильное приложение кошелька (Trust Wallet, Rainbow и т.п.) — откройте наш сайт через встроенный браузер внутри самого приложения кошелька (не через Safari/Chrome напрямую) — так кошелёк подключится автоматически.",
+  "index.about.title": "О токене",
+  "index.about.text": "QUC — экспериментальный токен на BNB Smart Chain. Контракт верифицирован, исходный код открыт всем. Максимальная эмиссия ограничена, часть предложения сжигается через NFT-механику, что делает токен дефляционным со временем.",
+  "index.about.contract": "Контракт токена", "index.about.network": "Сеть", "index.about.standard": "Стандарт",
+  "index.qr.title": "Открыть на телефоне",
+  "index.qr.text": "Отсканируйте QR-код камерой телефона — если у вас есть приложение криптокошелька, лучше открыть ссылку через встроенный браузер внутри него.",
+  "index.links.title": "Ссылки",
+  "index.links.source": "Исходный код на BscScan →",
+  "index.links.pool": "Пул ликвидности на PancakeSwap →",
+  "index.footer": "Quantum Universe Coin · BNB Smart Chain",
+
+  "common.connect": "Подключить кошелёк",
+  "common.account": "Аккаунт", "common.notconnected": "не подключен",
+  "common.chainid": "Сеть (chainId)",
+
+  "mint.title": "Burn → Mint",
+  "mint.subtitle": "Сожгите QUC — получите уникальную квантовую частицу. Часть суммы сгорает навсегда, часть уходит создателю проекта. Тип и редкость — случайны.",
+  "mint.help": "❓ Как это работает?",
+  "mint.mybalance": "Мой баланс QUC",
+  "mint.costof1": "Стоимость 1 частицы",
+  "mint.afford": "Хватит на минтов",
+  "mint.card.title": "Заминтить частицу",
+  "mint.card.note": "👉 Одно нажатие кнопки = ровно одна частица. Хотите больше — жмите кнопку ещё раз (каждый раз отдельное подтверждение в кошельке и отдельная случайная частица).",
+  "mint.button": "Сжечь QUC и заминтить 1 NFT",
+  "mint.fusion.title": "Fusion — слияние частиц",
+  "mint.fusion.text1": "Слейте две своих частицы", "mint.fusion.text2": "одинаковой редкости", "mint.fusion.text3": "— получите одну новую, с шансом", "mint.fusion.text4": "50%", "mint.fusion.text5": "на повышение редкости. Стоимость fusion —",
+  "mint.fusion.text6": "ID своих частиц смотрите в результате минта выше или в MetaMask (вкладка NFT).",
+  "mint.fusion.id1": "ID первой частицы", "mint.fusion.id2": "ID второй частицы", "mint.fusion.button": "Слить частицы",
+  "mint.recent.title": "Недавние выпадения",
+  "mint.recent.text": "Публичные RPC режут live-запросы истории блокчейна, поэтому лента выпадений — прямая ссылка на события контракта в BscScan (обновляется в реальном времени):",
+  "mint.recent.link": "Смотреть все Mint и Fusion события →",
+  "mint.footer": "Quantum Universe Coin · Quantum Particle NFT",
+  "mint.waiting": "Ожидание действий...",
+
+  "tut.prev": "← Назад", "tut.next": "Дальше →", "tut.start": "Погнали! 🚀", "tut.skip": "Пропустить",
+  "tut.1.title": "Что такое QUC?",
+  "tut.1.text": "Представь, что QUC — это волшебные звёздные монетки. Они лежат в твоём кошельке — это как копилка, только в интернете, и её видишь только ты.",
+  "tut.2.title": "Что значит «сжечь»?",
+  "tut.2.text": "Если бросить монетки в волшебную печку — они исчезают навсегда! Но взамен из дыма появляется что-то новое и интересное.",
+  "tut.3.title": "Что появляется из печки?",
+  "tut.3.text": "Появляется частица — маленький кусочек квантовой вселенной. У каждой частицы есть тип (Electron, Proton, Neutron или Photon) и редкость.",
+  "tut.4.title": "Что такое редкость?",
+  "tut.4.text": "Это как карточки в коллекции! Common встречается часто (60 из 100 раз), а золотую Legendary найти очень трудно — всего 3 раза из 100. Чем реже — тем круче!",
+  "tut.5.title": "А что такое Fusion?",
+  "tut.5.text": "Если у тебя есть две одинаковые по редкости частицы — можно слить их вместе во второй печке! Есть шанс 50%, что получится частица более высокой редкости.",
+  "tut.6.title": "А кошелёк — это безопасно?",
+  "tut.6.text": "Кошелёк (MetaMask и похожие) — это твой личный сейф, куда никто, кроме тебя, зайти не может. Подключаешь его к сайту — как показываешь пропуск, чтобы поиграть, а не отдаёшь ключи от сейфа.",
+  "tut.7.title": "Готов начать?",
+  "tut.7.text": "Подключай кошелёк, жми «Сжечь QUC и заминтить NFT» — и смотри, какая частица тебе выпадет! Удачи, исследователь квантовой вселенной!",
+
+  "stake.title": "Quantum Staking",
+  "stake.subtitle": "Заморозьте QUC и получайте награду в QUC со временем — чем больше застейкано и дольше держится, тем больше ваша доля от призового фонда.",
+  "stake.walletbalance": "Баланс QUC в кошельке",
+  "stake.mystaked": "Мой застейканный QUC",
+  "stake.myearned": "Моя накопленная награда",
+  "stake.totalstaked": "Всего застейкано всеми",
+  "stake.periodfinish": "Награды выплачиваются до",
+  "stake.stake.title": "Застейкать", "stake.stake.label": "Сколько QUC застейкать", "stake.stake.button": "Застейкать",
+  "stake.withdraw.title": "Снять / забрать награду", "stake.withdraw.label": "Сколько QUC снять из стейка",
+  "stake.withdraw.button": "Снять", "stake.claim.button": "Забрать награду", "stake.exit.button": "Снять всё и забрать награду",
+  "stake.footer": "Quantum Universe Coin · Staking"
+},
+en: {
+  "nav.home": "Home", "nav.stake": "Staking", "nav.mint": "Mint NFT",
+
+  "index.title": "Quantum Universe Coin",
+  "index.subtitle": "QUC token on BNB Smart Chain — with real staking and NFT particles born from burned token energy.",
+  "index.feature.trade.title": "Buy / swap",
+  "index.feature.trade.text": "Trade QUC for BNB on PancakeSwap.",
+  "index.feature.stake.title": "Staking",
+  "index.feature.stake.text": "Lock your QUC and earn rewards over time.",
+  "index.feature.mint.title": "Burn-to-mint NFT",
+  "index.feature.mint.text": "Burn QUC — get a unique quantum particle.",
+  "index.howtobuy.title": "How to buy QUC",
+  "index.howtobuy.intro": "Works with any crypto wallet — not just MetaMask. Pick whichever is convenient:",
+  "index.howtobuy.step1.title": "1. Via PancakeSwap",
+  "index.howtobuy.step1.pre": "Go to the",
+  "index.howtobuy.step1.link": "swap page",
+  "index.howtobuy.step1.post": "and connect any wallet: MetaMask, Trust Wallet, Coinbase Wallet, Rabby, Binance Wallet, OKX Wallet and others — every standard crypto wallet works.",
+  "index.howtobuy.step2.title": "2. Right on this site",
+  "index.howtobuy.step2.text": "The «Connect wallet» buttons on the Staking and Mint NFT pages also work with any browser wallet, not just MetaMask.",
+  "index.howtobuy.step3.title": "3. From your phone",
+  "index.howtobuy.step3.text": "If you have a mobile wallet app (Trust Wallet, Rainbow, etc.) — open our site through the built-in browser inside the wallet app itself (not Safari/Chrome directly) — the wallet will then connect automatically.",
+  "index.about.title": "About the token",
+  "index.about.text": "QUC is an experimental token on BNB Smart Chain. The contract is verified, the source code is open to everyone. Maximum supply is capped, and part of the supply is burned through the NFT mechanic, making the token deflationary over time.",
+  "index.about.contract": "Token contract", "index.about.network": "Network", "index.about.standard": "Standard",
+  "index.qr.title": "Open on your phone",
+  "index.qr.text": "Scan the QR code with your phone's camera — if you have a crypto wallet app, it's best to open the link through its built-in browser.",
+  "index.links.title": "Links",
+  "index.links.source": "Source code on BscScan →",
+  "index.links.pool": "Liquidity pool on PancakeSwap →",
+  "index.footer": "Quantum Universe Coin · BNB Smart Chain",
+
+  "common.connect": "Connect wallet",
+  "common.account": "Account", "common.notconnected": "not connected",
+  "common.chainid": "Network (chainId)",
+
+  "mint.title": "Burn → Mint",
+  "mint.subtitle": "Burn QUC — get a unique quantum particle. Part of the amount is burned forever, part goes to the project creator. Type and rarity are random.",
+  "mint.help": "❓ How does this work?",
+  "mint.mybalance": "My QUC balance",
+  "mint.costof1": "Cost of 1 particle",
+  "mint.afford": "Enough for X mints",
+  "mint.card.title": "Mint a particle",
+  "mint.card.note": "👉 One button click = exactly one particle. Want more — click again (each time is a separate wallet confirmation and a separate random particle).",
+  "mint.button": "Burn QUC and mint 1 NFT",
+  "mint.fusion.title": "Fusion — merge particles",
+  "mint.fusion.text1": "Merge two of your particles", "mint.fusion.text2": "of the same rarity", "mint.fusion.text3": "— get one new one, with a", "mint.fusion.text4": "50%", "mint.fusion.text5": "chance of a rarity upgrade. Fusion cost —",
+  "mint.fusion.text6": "You can find your particle IDs in the mint result above or in MetaMask (NFT tab).",
+  "mint.fusion.id1": "First particle ID", "mint.fusion.id2": "Second particle ID", "mint.fusion.button": "Fuse particles",
+  "mint.recent.title": "Recent drops",
+  "mint.recent.text": "Public RPCs block live blockchain history queries, so the drop feed is a direct link to the contract's events on BscScan (updates in real time):",
+  "mint.recent.link": "View all Mint and Fusion events →",
+  "mint.footer": "Quantum Universe Coin · Quantum Particle NFT",
+  "mint.waiting": "Waiting for action...",
+
+  "tut.prev": "← Back", "tut.next": "Next →", "tut.start": "Let's go! 🚀", "tut.skip": "Skip",
+  "tut.1.title": "What is QUC?",
+  "tut.1.text": "Imagine QUC is magical star coins. They live in your wallet — like a piggy bank, but on the internet, and only you can see it.",
+  "tut.2.title": "What does «burning» mean?",
+  "tut.2.text": "If you throw coins into a magic furnace — they disappear forever! But in return, something new and interesting appears out of the smoke.",
+  "tut.3.title": "What comes out of the furnace?",
+  "tut.3.text": "A particle appears — a tiny piece of the quantum universe. Every particle has a type (Electron, Proton, Neutron or Photon) and a rarity.",
+  "tut.4.title": "What is rarity?",
+  "tut.4.text": "It's like trading cards! Common shows up a lot (60 out of 100 times), while the golden Legendary is very hard to find — just 3 times out of 100. The rarer, the cooler!",
+  "tut.5.title": "So what is Fusion?",
+  "tut.5.text": "If you have two particles of the same rarity — you can merge them in a second furnace! There's a 50% chance you'll get a higher-rarity particle.",
+  "tut.6.title": "Is the wallet safe?",
+  "tut.6.text": "A wallet (MetaMask and similar) is your personal safe that only you can open. Connecting it to the site is like showing a pass to play — not handing over the keys to your safe.",
+  "tut.7.title": "Ready to start?",
+  "tut.7.text": "Connect your wallet, hit «Burn QUC and mint 1 NFT» — and see what particle you get! Good luck, explorer of the quantum universe!",
+
+  "stake.title": "Quantum Staking",
+  "stake.subtitle": "Lock your QUC and earn rewards in QUC over time — the more you stake and the longer you hold, the bigger your share of the reward pool.",
+  "stake.walletbalance": "QUC balance in wallet",
+  "stake.mystaked": "My staked QUC",
+  "stake.myearned": "My accrued reward",
+  "stake.totalstaked": "Total staked by everyone",
+  "stake.periodfinish": "Rewards pay out until",
+  "stake.stake.title": "Stake", "stake.stake.label": "How much QUC to stake", "stake.stake.button": "Stake",
+  "stake.withdraw.title": "Withdraw / claim reward", "stake.withdraw.label": "How much QUC to withdraw",
+  "stake.withdraw.button": "Withdraw", "stake.claim.button": "Claim reward", "stake.exit.button": "Withdraw all and claim reward",
+  "stake.footer": "Quantum Universe Coin · Staking"
+},
+zh: {
+  "nav.home": "首页", "nav.stake": "质押", "nav.mint": "铸造NFT",
+
+  "index.title": "Quantum Universe Coin",
+  "index.subtitle": "QUC 是 BNB 智能链上的代币 —— 拥有真实质押收益，以及由燃烧代币能量诞生的 NFT 粒子。",
+  "index.feature.trade.title": "购买 / 兑换",
+  "index.feature.trade.text": "在 PancakeSwap 上用 BNB 交易 QUC。",
+  "index.feature.stake.title": "质押",
+  "index.feature.stake.text": "锁定 QUC，随时间获得奖励。",
+  "index.feature.mint.title": "销毁铸造 NFT",
+  "index.feature.mint.text": "销毁 QUC —— 获得独特的量子粒子。",
+  "index.howtobuy.title": "如何购买 QUC",
+  "index.howtobuy.intro": "支持任意加密钱包 —— 不仅限于 MetaMask。选择您方便的方式：",
+  "index.howtobuy.step1.title": "1. 通过 PancakeSwap",
+  "index.howtobuy.step1.pre": "打开",
+  "index.howtobuy.step1.link": "兑换页面",
+  "index.howtobuy.step1.post": "，连接任意钱包：MetaMask、Trust Wallet、Coinbase Wallet、Rabby、Binance Wallet、OKX Wallet 等 —— 所有标准加密钱包均可使用。",
+  "index.howtobuy.step2.title": "2. 直接在本网站",
+  "index.howtobuy.step2.text": "质押和铸造NFT页面上的「连接钱包」按钮同样支持任意浏览器钱包，不仅限于 MetaMask。",
+  "index.howtobuy.step3.title": "3. 使用手机",
+  "index.howtobuy.step3.text": "如果您使用手机钱包应用（Trust Wallet、Rainbow 等）—— 请通过钱包应用内置的浏览器打开本网站（而不是直接用 Safari/Chrome）—— 这样钱包会自动连接。",
+  "index.about.title": "关于代币",
+  "index.about.text": "QUC 是 BNB 智能链上的实验性代币。合约已验证，源代码完全公开。最大发行量有上限，部分供应量通过 NFT 机制被销毁，使代币随时间产生通缩效应。",
+  "index.about.contract": "代币合约", "index.about.network": "网络", "index.about.standard": "标准",
+  "index.qr.title": "在手机上打开",
+  "index.qr.text": "用手机摄像头扫描二维码 —— 如果您有加密钱包应用，最好通过其内置浏览器打开链接。",
+  "index.links.title": "链接",
+  "index.links.source": "在 BscScan 查看源代码 →",
+  "index.links.pool": "PancakeSwap 流动性池 →",
+  "index.footer": "Quantum Universe Coin · BNB Smart Chain",
+
+  "common.connect": "连接钱包",
+  "common.account": "账户", "common.notconnected": "未连接",
+  "common.chainid": "网络 (chainId)",
+
+  "mint.title": "销毁 → 铸造",
+  "mint.subtitle": "销毁 QUC —— 获得独特的量子粒子。部分金额永久销毁，部分归项目创建者所有。类型和稀有度均为随机。",
+  "mint.help": "❓ 这是如何运作的？",
+  "mint.mybalance": "我的 QUC 余额",
+  "mint.costof1": "1个粒子的成本",
+  "mint.afford": "可铸造次数",
+  "mint.card.title": "铸造粒子",
+  "mint.card.note": "👉 点击一次按钮 = 恰好一个粒子。想要更多 —— 请再次点击（每次都需要单独的钱包确认，并获得一个独立的随机粒子）。",
+  "mint.button": "销毁 QUC 并铸造 1 个 NFT",
+  "mint.fusion.title": "Fusion —— 粒子融合",
+  "mint.fusion.text1": "融合两个", "mint.fusion.text2": "稀有度相同", "mint.fusion.text3": "的粒子 —— 获得一个新粒子，有", "mint.fusion.text4": "50%", "mint.fusion.text5": "的几率提升稀有度。融合费用 —",
+  "mint.fusion.text6": "您的粒子 ID 可在上方铸造结果或 MetaMask 的 NFT 标签页中查看。",
+  "mint.fusion.id1": "第一个粒子 ID", "mint.fusion.id2": "第二个粒子 ID", "mint.fusion.button": "融合粒子",
+  "mint.recent.title": "最近掉落",
+  "mint.recent.text": "公共 RPC 节点限制了实时区块链历史查询，因此掉落记录改为直接链接到 BscScan 上的合约事件（实时更新）：",
+  "mint.recent.link": "查看所有铸造和融合事件 →",
+  "mint.footer": "Quantum Universe Coin · Quantum Particle NFT",
+  "mint.waiting": "等待操作...",
+
+  "tut.prev": "← 上一步", "tut.next": "下一步 →", "tut.start": "开始吧！🚀", "tut.skip": "跳过",
+  "tut.1.title": "什么是 QUC？",
+  "tut.1.text": "把 QUC 想象成神奇的星星硬币。它们存放在你的钱包里 —— 就像一个存钱罐，只不过是在互联网上，只有你能看到它。",
+  "tut.2.title": "「销毁」是什么意思？",
+  "tut.2.text": "如果把硬币扔进魔法炉子 —— 它们会永远消失！但作为回报，烟雾中会出现一些新奇有趣的东西。",
+  "tut.3.title": "炉子里会出来什么？",
+  "tut.3.text": "会出现一个粒子 —— 量子宇宙的一小块碎片。每个粒子都有类型（Electron、Proton、Neutron 或 Photon）和稀有度。",
+  "tut.4.title": "什么是稀有度？",
+  "tut.4.text": "就像收藏卡牌一样！Common 很常见（100次里出现60次），而金色的 Legendary 非常难找 —— 100次里只有3次。越稀有越酷！",
+  "tut.5.title": "那 Fusion 又是什么？",
+  "tut.5.text": "如果你有两个稀有度相同的粒子 —— 可以把它们放进第二个炉子里融合！有 50% 的几率获得更高稀有度的粒子。",
+  "tut.6.title": "钱包安全吗？",
+  "tut.6.text": "钱包（MetaMask 等）就像你的私人保险箱，除了你没人能打开。把它连接到网站，就像出示一张通行证去玩游戏 —— 而不是把保险箱钥匙交出去。",
+  "tut.7.title": "准备好开始了吗？",
+  "tut.7.text": "连接钱包，点击「销毁 QUC 并铸造 NFT」—— 看看你会获得什么粒子！祝你好运，量子宇宙探索者！",
+
+  "stake.title": "Quantum Staking",
+  "stake.subtitle": "锁定 QUC，随时间获得 QUC 奖励 —— 质押越多、持有时间越长，从奖励池中获得的份额就越大。",
+  "stake.walletbalance": "钱包中的 QUC 余额",
+  "stake.mystaked": "我已质押的 QUC",
+  "stake.myearned": "我累计的奖励",
+  "stake.totalstaked": "所有人质押总量",
+  "stake.periodfinish": "奖励发放截止至",
+  "stake.stake.title": "质押", "stake.stake.label": "质押多少 QUC", "stake.stake.button": "质押",
+  "stake.withdraw.title": "提取 / 领取奖励", "stake.withdraw.label": "从质押中提取多少 QUC",
+  "stake.withdraw.button": "提取", "stake.claim.button": "领取奖励", "stake.exit.button": "提取全部并领取奖励",
+  "stake.footer": "Quantum Universe Coin · Staking"
+},
+es: {
+  "nav.home": "Inicio", "nav.stake": "Staking", "nav.mint": "Mint NFT",
+
+  "index.title": "Quantum Universe Coin",
+  "index.subtitle": "Token QUC en BNB Smart Chain — con staking real y partículas NFT nacidas de la energía del token quemado.",
+  "index.feature.trade.title": "Comprar / intercambiar",
+  "index.feature.trade.text": "Intercambia QUC por BNB en PancakeSwap.",
+  "index.feature.stake.title": "Staking",
+  "index.feature.stake.text": "Bloquea tus QUC y gana recompensas con el tiempo.",
+  "index.feature.mint.title": "NFT quema-y-acuña",
+  "index.feature.mint.text": "Quema QUC — obtén una partícula cuántica única.",
+  "index.howtobuy.title": "Cómo comprar QUC",
+  "index.howtobuy.intro": "Funciona con cualquier billetera cripto — no solo MetaMask. Elige la opción que prefieras:",
+  "index.howtobuy.step1.title": "1. A través de PancakeSwap",
+  "index.howtobuy.step1.pre": "Ve a la",
+  "index.howtobuy.step1.link": "página de intercambio",
+  "index.howtobuy.step1.post": "y conecta cualquier billetera: MetaMask, Trust Wallet, Coinbase Wallet, Rabby, Binance Wallet, OKX Wallet y otras — todas las billeteras cripto estándar funcionan.",
+  "index.howtobuy.step2.title": "2. Directamente en este sitio",
+  "index.howtobuy.step2.text": "Los botones «Conectar billetera» en las páginas de Staking y Mint NFT también funcionan con cualquier billetera de navegador, no solo MetaMask.",
+  "index.howtobuy.step3.title": "3. Desde tu teléfono",
+  "index.howtobuy.step3.text": "Si tienes una app de billetera móvil (Trust Wallet, Rainbow, etc.) — abre nuestro sitio a través del navegador integrado dentro de la propia app de la billetera (no directamente con Safari/Chrome) — así la billetera se conectará automáticamente.",
+  "index.about.title": "Sobre el token",
+  "index.about.text": "QUC es un token experimental en BNB Smart Chain. El contrato está verificado, el código fuente es público. La emisión máxima está limitada, y parte de la oferta se quema a través del mecanismo NFT, haciendo el token deflacionario con el tiempo.",
+  "index.about.contract": "Contrato del token", "index.about.network": "Red", "index.about.standard": "Estándar",
+  "index.qr.title": "Abrir en tu teléfono",
+  "index.qr.text": "Escanea el código QR con la cámara de tu teléfono — si tienes una app de billetera cripto, es mejor abrir el enlace con su navegador integrado.",
+  "index.links.title": "Enlaces",
+  "index.links.source": "Código fuente en BscScan →",
+  "index.links.pool": "Pool de liquidez en PancakeSwap →",
+  "index.footer": "Quantum Universe Coin · BNB Smart Chain",
+
+  "common.connect": "Conectar billetera",
+  "common.account": "Cuenta", "common.notconnected": "no conectada",
+  "common.chainid": "Red (chainId)",
+
+  "mint.title": "Burn → Mint",
+  "mint.subtitle": "Quema QUC — obtén una partícula cuántica única. Parte del monto se quema para siempre, parte va al creador del proyecto. El tipo y la rareza son aleatorios.",
+  "mint.help": "❓ ¿Cómo funciona esto?",
+  "mint.mybalance": "Mi saldo de QUC",
+  "mint.costof1": "Costo de 1 partícula",
+  "mint.afford": "Alcanza para X mints",
+  "mint.card.title": "Acuñar una partícula",
+  "mint.card.note": "👉 Un clic del botón = exactamente una partícula. ¿Quieres más? Haz clic de nuevo (cada vez es una confirmación de billetera separada y una partícula aleatoria distinta).",
+  "mint.button": "Quemar QUC y acuñar 1 NFT",
+  "mint.fusion.title": "Fusion — fusionar partículas",
+  "mint.fusion.text1": "Fusiona dos de tus partículas", "mint.fusion.text2": "de la misma rareza", "mint.fusion.text3": "— obtén una nueva, con un", "mint.fusion.text4": "50%", "mint.fusion.text5": "de probabilidad de mejorar la rareza. Costo de fusion —",
+  "mint.fusion.text6": "Puedes ver los ID de tus partículas en el resultado del mint de arriba o en MetaMask (pestaña NFT).",
+  "mint.fusion.id1": "ID de la primera partícula", "mint.fusion.id2": "ID de la segunda partícula", "mint.fusion.button": "Fusionar partículas",
+  "mint.recent.title": "Drops recientes",
+  "mint.recent.text": "Los RPC públicos bloquean las consultas en vivo del historial de la blockchain, así que el feed de drops es un enlace directo a los eventos del contrato en BscScan (se actualiza en tiempo real):",
+  "mint.recent.link": "Ver todos los eventos de Mint y Fusion →",
+  "mint.footer": "Quantum Universe Coin · Quantum Particle NFT",
+  "mint.waiting": "Esperando acciones...",
+
+  "tut.prev": "← Atrás", "tut.next": "Siguiente →", "tut.start": "¡Vamos! 🚀", "tut.skip": "Omitir",
+  "tut.1.title": "¿Qué es QUC?",
+  "tut.1.text": "Imagina que QUC son monedas mágicas de estrella. Viven en tu billetera — como una alcancía, pero en internet, y solo tú puedes verla.",
+  "tut.2.title": "¿Qué significa «quemar»?",
+  "tut.2.text": "Si tiras las monedas a un horno mágico — ¡desaparecen para siempre! Pero a cambio, algo nuevo e interesante aparece entre el humo.",
+  "tut.3.title": "¿Qué sale del horno?",
+  "tut.3.text": "Aparece una partícula — un pequeño trozo del universo cuántico. Cada partícula tiene un tipo (Electron, Proton, Neutron o Photon) y una rareza.",
+  "tut.4.title": "¿Qué es la rareza?",
+  "tut.4.text": "¡Es como las cartas coleccionables! Common aparece seguido (60 de cada 100 veces), mientras que la dorada Legendary es muy difícil de encontrar — solo 3 de cada 100. ¡Cuanto más rara, más genial!",
+  "tut.5.title": "¿Y qué es Fusion?",
+  "tut.5.text": "Si tienes dos partículas de la misma rareza — ¡puedes fusionarlas en un segundo horno! Hay un 50% de probabilidad de obtener una partícula de mayor rareza.",
+  "tut.6.title": "¿Es segura la billetera?",
+  "tut.6.text": "Una billetera (MetaMask y similares) es tu caja fuerte personal, que solo tú puedes abrir. Conectarla al sitio es como mostrar un pase para jugar — no entregar las llaves de tu caja fuerte.",
+  "tut.7.title": "¿Listo para empezar?",
+  "tut.7.text": "Conecta tu billetera, pulsa «Quemar QUC y acuñar 1 NFT» — ¡y mira qué partícula te toca! ¡Buena suerte, explorador del universo cuántico!",
+
+  "stake.title": "Quantum Staking",
+  "stake.subtitle": "Bloquea tus QUC y gana recompensas en QUC con el tiempo — cuanto más stakees y más tiempo lo mantengas, mayor será tu parte del fondo de recompensas.",
+  "stake.walletbalance": "Saldo de QUC en la billetera",
+  "stake.mystaked": "Mi QUC en staking",
+  "stake.myearned": "Mi recompensa acumulada",
+  "stake.totalstaked": "Total en staking de todos",
+  "stake.periodfinish": "Las recompensas se pagan hasta",
+  "stake.stake.title": "Hacer staking", "stake.stake.label": "Cuánto QUC stakear", "stake.stake.button": "Stakear",
+  "stake.withdraw.title": "Retirar / reclamar recompensa", "stake.withdraw.label": "Cuánto QUC retirar del staking",
+  "stake.withdraw.button": "Retirar", "stake.claim.button": "Reclamar recompensa", "stake.exit.button": "Retirar todo y reclamar recompensa",
+  "stake.footer": "Quantum Universe Coin · Staking"
+}
+};
+
+const LANG_NAMES = { ru: "RU", en: "EN", zh: "中文", es: "ES" };
+
+function t(key) {
+  const lang = localStorage.getItem("quc_lang") || "ru";
+  return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS.ru[key] || key;
+}
+
+function applyTranslations() {
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
+    el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
+  });
+  document.documentElement.lang = localStorage.getItem("quc_lang") || "ru";
+}
+
+function buildLangSwitcher() {
+  const current = localStorage.getItem("quc_lang") || "ru";
+  const nav = document.querySelector("nav");
+  if (!nav) return;
+  const sel = document.createElement("select");
+  sel.id = "langSwitcher";
+  sel.style.cssText = "margin-left:8px; background:rgba(255,255,255,0.05); color:var(--text); border:1px solid var(--border-glow); border-radius:999px; padding:6px 10px; font-family:'Orbitron',sans-serif; font-size:12px;";
+  Object.keys(LANG_NAMES).forEach(code => {
+    const opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = LANG_NAMES[code];
+    if (code === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => {
+    localStorage.setItem("quc_lang", sel.value);
+    applyTranslations();
+    if (typeof onLanguageChanged === "function") onLanguageChanged();
+  };
+  nav.appendChild(sel);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  buildLangSwitcher();
+  applyTranslations();
+});

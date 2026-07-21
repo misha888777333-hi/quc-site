@@ -10,50 +10,50 @@
 <div class="wrap">
 
   <nav>
-    <a href="index.html">Главная</a>
-    <a href="stake.html" class="active">Стейкинг</a>
-    <a href="mint.html">Минт NFT</a>
+    <a href="index.html" data-i18n="nav.home">Главная</a>
+    <a href="stake.html" class="active" data-i18n="nav.stake">Стейкинг</a>
+    <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
   </nav>
 
   <div style="text-align:center; margin-bottom: 32px;">
-    <h1>Quantum Staking</h1>
-    <p>Заморозьте QUC и получайте награду в QUC со временем — чем больше<br/>
-    застейкано и дольше держится, тем больше ваша доля от призового фонда.</p>
+    <h1 data-i18n="stake.title">Quantum Staking</h1>
+    <p data-i18n="stake.subtitle">Заморозьте QUC и получайте награду в QUC со временем — чем больше застейкано и дольше держится, тем больше ваша доля от призового фонда.</p>
   </div>
 
   <div class="card">
-    <button id="connectBtn">Подключить кошелёк</button>
-    <div class="stat"><span>Аккаунт</span><span id="account">не подключен</span></div>
-    <div class="stat"><span>Сеть (chainId)</span><span id="chainId">—</span></div>
+    <button id="connectBtn" data-i18n="common.connect">Подключить кошелёк</button>
+    <div class="stat"><span data-i18n="common.account">Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat"><span data-i18n="common.chainid">Сеть (chainId)</span><span id="chainId">—</span></div>
     <p class="warn" id="networkWarn"></p>
-    <div class="stat"><span>Баланс QUC в кошельке</span><span id="walletBalance">—</span></div>
-    <div class="stat"><span>Мой застейканный QUC</span><span id="myStaked">—</span></div>
-    <div class="stat"><span>Моя накопленная награда</span><span id="myEarned">—</span></div>
-    <div class="stat"><span>Всего застейкано всеми</span><span id="totalStaked">—</span></div>
-    <div class="stat"><span>Награды выплачиваются до</span><span id="periodFinish">—</span></div>
+    <div class="stat"><span data-i18n="stake.walletbalance">Баланс QUC в кошельке</span><span id="walletBalance">—</span></div>
+    <div class="stat"><span data-i18n="stake.mystaked">Мой застейканный QUC</span><span id="myStaked">—</span></div>
+    <div class="stat"><span data-i18n="stake.myearned">Моя накопленная награда</span><span id="myEarned">—</span></div>
+    <div class="stat"><span data-i18n="stake.totalstaked">Всего застейкано всеми</span><span id="totalStaked">—</span></div>
+    <div class="stat"><span data-i18n="stake.periodfinish">Награды выплачиваются до</span><span id="periodFinish">—</span></div>
   </div>
 
   <div class="card">
-    <h2>Застейкать</h2>
-    <label>Сколько QUC застейкать</label>
+    <h2 data-i18n="stake.stake.title">Застейкать</h2>
+    <label data-i18n="stake.stake.label">Сколько QUC застейкать</label>
     <input id="stakeAmount" placeholder="Например: 1000" />
-    <button id="stakeBtn">Застейкать</button>
+    <button id="stakeBtn" data-i18n="stake.stake.button">Застейкать</button>
   </div>
 
   <div class="card">
-    <h2>Снять / забрать награду</h2>
-    <label>Сколько QUC снять из стейка</label>
+    <h2 data-i18n="stake.withdraw.title">Снять / забрать награду</h2>
+    <label data-i18n="stake.withdraw.label">Сколько QUC снять из стейка</label>
     <input id="withdrawAmount" placeholder="Например: 500" />
-    <button id="withdrawBtn">Снять</button>
-    <button id="claimBtn">Забрать награду</button>
-    <button id="exitBtn">Снять всё и забрать награду</button>
+    <button id="withdrawBtn" data-i18n="stake.withdraw.button">Снять</button>
+    <button id="claimBtn" data-i18n="stake.claim.button">Забрать награду</button>
+    <button id="exitBtn" data-i18n="stake.exit.button">Снять всё и забрать награду</button>
   </div>
 
-  <div id="log">Ожидание действий...</div>
+  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
 
-  <footer>Quantum Universe Coin · Staking</footer>
+  <footer data-i18n="stake.footer">Quantum Universe Coin · Staking</footer>
 </div>
 
+<script src="i18n.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
 <script>
 const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
@@ -78,6 +78,10 @@ const STAKING_ABI = [
 
 const log = (msg) => { document.getElementById("log").textContent = msg; };
 let provider, signer, token, staking, myAddress;
+
+function onLanguageChanged() {
+  if (log) log(t("mint.waiting"));
+}
 
 async function refreshInfo() {
   const network = await provider.getNetwork();

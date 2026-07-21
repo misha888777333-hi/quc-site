@@ -10,16 +10,15 @@
 <div class="wrap">
 
   <nav>
-    <a href="index.html">Главная</a>
-    <a href="stake.html">Стейкинг</a>
-    <a href="mint.html" class="active">Минт NFT</a>
+    <a href="index.html" data-i18n="nav.home">Главная</a>
+    <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
+    <a href="mint.html" class="active" data-i18n="nav.mint">Минт NFT</a>
   </nav>
 
   <div style="text-align:center; margin-bottom: 12px;">
-    <h1>Burn → Mint</h1>
-    <p>Сожгите QUC — получите уникальную квантовую частицу. Часть суммы сгорает<br/>
-    навсегда, часть уходит создателю проекта. Тип и редкость — случайны.</p>
-    <button id="helpBtn" class="help-btn">❓ Как это работает?</button>
+    <h1 data-i18n="mint.title">Burn → Mint</h1>
+    <p data-i18n="mint.subtitle">Сожгите QUC — получите уникальную квантовую частицу. Часть суммы сгорает навсегда, часть уходит создателю проекта. Тип и редкость — случайны.</p>
+    <button id="helpBtn" class="help-btn" data-i18n="mint.help">❓ Как это работает?</button>
   </div>
 
   <div id="tutorialOverlay" class="tutorial-overlay" style="display:none;">
@@ -29,65 +28,68 @@
       <p id="tutText"></p>
       <div class="tutorial-dots" id="tutDots"></div>
       <div class="tutorial-nav">
-        <button id="tutPrev">← Назад</button>
-        <button id="tutNext">Дальше →</button>
+        <button id="tutPrev"></button>
+        <button id="tutNext"></button>
       </div>
-      <button id="tutSkip" class="tutorial-skip">Пропустить</button>
+      <button id="tutSkip" class="tutorial-skip" data-i18n="tut.skip">Пропустить</button>
     </div>
   </div>
 
   <div class="card">
-    <button id="connectBtn">Подключить кошелёк</button>
-    <div class="stat"><span>Аккаунт</span><span id="account">не подключен</span></div>
-    <div class="stat"><span>Сеть (chainId)</span><span id="chainId">—</span></div>
+    <button id="connectBtn" data-i18n="common.connect">Подключить кошелёк</button>
+    <div class="stat"><span data-i18n="common.account">Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat"><span data-i18n="common.chainid">Сеть (chainId)</span><span id="chainId">—</span></div>
     <p class="warn" id="networkWarn"></p>
-    <div class="stat"><span>Мой баланс QUC</span><span id="myBalance">—</span></div>
-    <div class="stat"><span>Стоимость 1 частицы</span><span id="totalCost">—</span></div>
-    <div class="stat"><span>Хватит на минтов</span><span id="affordCount">—</span></div>
+    <div class="stat"><span data-i18n="mint.mybalance">Мой баланс QUC</span><span id="myBalance">—</span></div>
+    <div class="stat"><span data-i18n="mint.costof1">Стоимость 1 частицы</span><span id="totalCost">—</span></div>
+    <div class="stat"><span data-i18n="mint.afford">Хватит на минтов</span><span id="affordCount">—</span></div>
   </div>
 
   <div class="card">
-    <h2>Заминтить частицу</h2>
-    <p style="font-size:13px;">👉 Одно нажатие кнопки = ровно <b>одна</b> частица.
-    Хотите больше — жмите кнопку ещё раз (каждый раз отдельное подтверждение
-    в кошельке и отдельная случайная частица).</p>
+    <h2 data-i18n="mint.card.title">Заминтить частицу</h2>
+    <p style="font-size:13px;" data-i18n="mint.card.note">👉 Одно нажатие кнопки = ровно одна частица. Хотите больше — жмите кнопку ещё раз (каждый раз отдельное подтверждение в кошельке и отдельная случайная частица).</p>
     <div class="odds-row">
       <div class="odds-pill odds-common"><span class="pct">60%</span>Common</div>
       <div class="odds-pill odds-rare"><span class="pct">25%</span>Rare</div>
       <div class="odds-pill odds-epic"><span class="pct">12%</span>Epic</div>
       <div class="odds-pill odds-legendary"><span class="pct">3%</span>Legendary</div>
     </div>
-    <button id="mintBtn">Сжечь QUC и заминтить 1 NFT</button>
+    <button id="mintBtn" data-i18n="mint.button">Сжечь QUC и заминтить 1 NFT</button>
     <div id="result" class="reveal-box"></div>
   </div>
 
   <div class="card">
-    <h2>Fusion — слияние частиц</h2>
-    <p>Слейте две своих частицы <b>одинаковой редкости</b> — получите одну новую,
-    с шансом <b>50%</b> на повышение редкости. Стоимость fusion — <span id="fusionCost">—</span>.
-    ID своих частиц смотрите в результате минта выше или в MetaMask (вкладка NFT).</p>
-    <label>ID первой частицы</label>
+    <h2 data-i18n="mint.fusion.title">Fusion — слияние частиц</h2>
+    <p>
+      <span data-i18n="mint.fusion.text1">Слейте две своих частицы</span>
+      <b data-i18n="mint.fusion.text2">одинаковой редкости</b>
+      <span data-i18n="mint.fusion.text3">— получите одну новую, с шансом</span>
+      <b data-i18n="mint.fusion.text4">50%</b>
+      <span data-i18n="mint.fusion.text5">на повышение редкости. Стоимость fusion —</span>
+      <span id="fusionCost">—</span>.
+      <span data-i18n="mint.fusion.text6">ID своих частиц смотрите в результате минта выше или в MetaMask (вкладка NFT).</span>
+    </p>
+    <label data-i18n="mint.fusion.id1">ID первой частицы</label>
     <input id="fuseId1" placeholder="Например: 0" />
-    <label>ID второй частицы</label>
+    <label data-i18n="mint.fusion.id2">ID второй частицы</label>
     <input id="fuseId2" placeholder="Например: 2" />
-    <button id="fuseBtn">Слить частицы</button>
+    <button id="fuseBtn" data-i18n="mint.fusion.button">Слить частицы</button>
     <div id="fuseResult" class="reveal-box"></div>
   </div>
 
   <div class="card">
-    <h2>Недавние выпадения</h2>
-    <p style="font-size:13px;">Публичные RPC режут live-запросы истории блокчейна,
-    поэтому лента выпадений — прямая ссылка на события контракта в BscScan
-    (обновляется в реальном времени):</p>
+    <h2 data-i18n="mint.recent.title">Недавние выпадения</h2>
+    <p style="font-size:13px;" data-i18n="mint.recent.text">Публичные RPC режут live-запросы истории блокчейна, поэтому лента выпадений — прямая ссылка на события контракта в BscScan (обновляется в реальном времени):</p>
     <a href="https://bscscan.com/address/0x5E7abD403A71E94a2c16746bD42F603a2A098c14#events"
-       target="_blank" rel="noopener" style="color: var(--teal);">Смотреть все Mint и Fusion события →</a>
+       target="_blank" rel="noopener" style="color: var(--teal);" data-i18n="mint.recent.link">Смотреть все Mint и Fusion события →</a>
   </div>
 
-  <div id="log">Ожидание действий...</div>
+  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
 
-  <footer>Quantum Universe Coin · Quantum Particle NFT</footer>
+  <footer data-i18n="mint.footer">Quantum Universe Coin · Quantum Particle NFT</footer>
 </div>
 
+<script src="i18n.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
 <script>
 const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
@@ -114,55 +116,20 @@ const NFT_ABI = [
 const log = (msg) => { document.getElementById("log").textContent = msg; };
 let provider, signer, myAddress, token, nft;
 
-const TUTORIAL_STEPS = [
-  {
-    emoji: "🪙",
-    title: "Что такое QUC?",
-    text: "Представь, что QUC — это волшебные звёздные монетки. Они лежат в твоём кошельке — это как копилка, только в интернете, и её видишь только ты."
-  },
-  {
-    emoji: "🔥",
-    title: "Что значит «сжечь»?",
-    text: "Если бросить монетки в волшебную печку — они исчезают навсегда! Но взамен из дыма появляется что-то новое и интересное."
-  },
-  {
-    emoji: "✨",
-    title: "Что появляется из печки?",
-    text: "Появляется частица — маленький кусочек квантовой вселенной. У каждой частицы есть тип (Electron, Proton, Neutron или Photon) и редкость."
-  },
-  {
-    emoji: "🌈",
-    title: "Что такое редкость?",
-    text: "Это как карточки в коллекции! Common встречается часто (60 из 100 раз), а золотую Legendary найти очень трудно — всего 3 раза из 100. Чем реже — тем круче!"
-  },
-  {
-    emoji: "⚗️",
-    title: "А что такое Fusion?",
-    text: "Если у тебя есть две одинаковые по редкости частицы — можно слить их вместе во второй печке! Есть шанс 50%, что получится частица более высокой редкости."
-  },
-  {
-    emoji: "🔒",
-    title: "А кошелёк — это безопасно?",
-    text: "Кошелёк (MetaMask и похожие) — это твой личный сейф, куда никто, кроме тебя, зайти не может. Подключаешь его к сайту — как показываешь пропуск, чтобы поиграть, а не отдаёшь ключи от сейфа."
-  },
-  {
-    emoji: "🚀",
-    title: "Готов начать?",
-    text: "Подключай кошелёк, жми «Сжечь QUC и заминтить NFT» — и смотри, какая частица тебе выпадет! Удачи, исследователь квантовой вселенной!"
-  }
-];
+const TUTORIAL_STEPS = ["tut.1", "tut.2", "tut.3", "tut.4", "tut.5", "tut.6", "tut.7"];
+const TUTORIAL_EMOJI = ["🪙", "🔥", "✨", "🌈", "⚗️", "🔒", "🚀"];
 let tutStep = 0;
 
 function renderTutorialStep() {
-  const s = TUTORIAL_STEPS[tutStep];
-  document.getElementById("tutEmoji").textContent = s.emoji;
-  document.getElementById("tutTitle").textContent = s.title;
-  document.getElementById("tutText").textContent = s.text;
+  document.getElementById("tutEmoji").textContent = TUTORIAL_EMOJI[tutStep];
+  document.getElementById("tutTitle").textContent = t(TUTORIAL_STEPS[tutStep] + ".title");
+  document.getElementById("tutText").textContent = t(TUTORIAL_STEPS[tutStep] + ".text");
   document.getElementById("tutDots").innerHTML = TUTORIAL_STEPS.map((_, i) =>
     "<span class='" + (i === tutStep ? "on" : "") + "'></span>"
   ).join("");
   document.getElementById("tutPrev").style.visibility = tutStep === 0 ? "hidden" : "visible";
-  document.getElementById("tutNext").textContent = tutStep === TUTORIAL_STEPS.length - 1 ? "Погнали! 🚀" : "Дальше →";
+  document.getElementById("tutPrev").textContent = t("tut.prev");
+  document.getElementById("tutNext").textContent = tutStep === TUTORIAL_STEPS.length - 1 ? t("tut.start") : t("tut.next");
 }
 
 function openTutorial() {
@@ -189,8 +156,17 @@ document.getElementById("tutPrev").onclick = () => {
   renderTutorialStep();
 };
 
+function onLanguageChanged() {
+  if (document.getElementById("tutorialOverlay").style.display !== "none") {
+    renderTutorialStep();
+  }
+  if (log) log(t("mint.waiting"));
+}
+
 if (!localStorage.getItem("quc_tutorial_seen")) {
   openTutorial();
+} else {
+  renderTutorialStep();
 }
 
 function playChime(rarity) {
@@ -241,7 +217,7 @@ async function refreshInfo() {
   document.getElementById("myBalance").textContent = ethers.formatUnits(balance, 18) + " QUC";
   document.getElementById("totalCost").textContent = ethers.formatUnits(cost, 18) + " QUC";
   document.getElementById("fusionCost").textContent = ethers.formatUnits(fusionCost, 18) + " QUC";
-  document.getElementById("affordCount").textContent = cost > 0n ? (balance / cost).toString() + " раз" : "—";
+  document.getElementById("affordCount").textContent = cost > 0n ? (balance / cost).toString() : "—";
 }
 
 document.getElementById("connectBtn").onclick = async () => {
