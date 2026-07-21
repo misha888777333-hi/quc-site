@@ -42,18 +42,22 @@
     <div class="stat"><span>Сеть (chainId)</span><span id="chainId">—</span></div>
     <p class="warn" id="networkWarn"></p>
     <div class="stat"><span>Мой баланс QUC</span><span id="myBalance">—</span></div>
-    <div class="stat"><span>Стоимость минта</span><span id="totalCost">—</span></div>
+    <div class="stat"><span>Стоимость 1 частицы</span><span id="totalCost">—</span></div>
+    <div class="stat"><span>Хватит на минтов</span><span id="affordCount">—</span></div>
   </div>
 
   <div class="card">
     <h2>Заминтить частицу</h2>
+    <p style="font-size:13px;">👉 Одно нажатие кнопки = ровно <b>одна</b> частица.
+    Хотите больше — жмите кнопку ещё раз (каждый раз отдельное подтверждение
+    в кошельке и отдельная случайная частица).</p>
     <div class="odds-row">
       <div class="odds-pill odds-common"><span class="pct">60%</span>Common</div>
       <div class="odds-pill odds-rare"><span class="pct">25%</span>Rare</div>
       <div class="odds-pill odds-epic"><span class="pct">12%</span>Epic</div>
       <div class="odds-pill odds-legendary"><span class="pct">3%</span>Legendary</div>
     </div>
-    <button id="mintBtn">Сжечь QUC и заминтить NFT</button>
+    <button id="mintBtn">Сжечь QUC и заминтить 1 NFT</button>
     <div id="result" class="reveal-box"></div>
   </div>
 
@@ -237,6 +241,7 @@ async function refreshInfo() {
   document.getElementById("myBalance").textContent = ethers.formatUnits(balance, 18) + " QUC";
   document.getElementById("totalCost").textContent = ethers.formatUnits(cost, 18) + " QUC";
   document.getElementById("fusionCost").textContent = ethers.formatUnits(fusionCost, 18) + " QUC";
+  document.getElementById("affordCount").textContent = cost > 0n ? (balance / cost).toString() + " раз" : "—";
 }
 
 document.getElementById("connectBtn").onclick = async () => {
