@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Угадай число — QUC</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html" data-i18n="nav.home">Главная</a>
+    <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
+    <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
+    <a href="games.html" class="active" data-i18n="nav.games">Игры</a>
+  </nav>
+
+  <div style="text-align:center; margin-bottom: 32px;">
+    <h1 data-i18n="guess.title">Угадай число</h1>
+    <p data-i18n="guess.subtitle">Выберите число от 1 до 10. Смарт-контракт в этот же момент загадывает своё случайное число и сравнивает — если совпало, вы сразу получаете приз в QUC. Один раунд — раз в 24 часа на кошелёк.</p>
+  </div>
+
+  <div class="card">
+    <button id="connectBtn" data-i18n="common.connect">Подключить кошелёк</button>
+    <div class="stat"><span data-i18n="common.account">Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat"><span data-i18n="common.chainid">Сеть (chainId)</span><span id="chainId">—</span></div>
+    <p class="warn" id="networkWarn"></p>
+    <div class="stat"><span>Приз за угадывание</span><span id="prizeAmount">—</span></div>
+    <div class="stat"><span>Следующая попытка доступна</span><span id="nextPlay">—</span></div>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="guess.pick">Выберите число</h2>
+    <div class="odds-row" id="numberButtons"></div>
+    <div id="resultBox" class="reveal-box" style="display:none; margin-top:16px;"></div>
+  </div>
+
+  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
+
+  <footer data-i18n="guess.footer">Quantum Universe Coin · Угадай число</footer>
+</div>
+
+<script src="i18n.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
+const GAME_ADDRESS = "0x42174eA4d650066FF05634216C7B246E506cb1cc";
+const EXPECTED_CHAIN_ID = 56n;
+
+const TOKEN_ABI = [
+  "function balanceOf(address) view returns (uint256)"
+];
+const GAME_ABI = [
+  "function guessNumber(uint8) returns (bool)",
+  "function numberGuessPrize() view returns (uint256)",
+  "function cooldown() view returns (uint256)",
+  "function lastGuessAt(address) view returns (uint256)",
+  "event NumberGuessResult(address indexed player, uint8 guess, uint8 answer, bool won, uint256 prize)"
+];
+
+const log = (msg) => { document.getElementById("log").textContent = msg; };
+let provider, signer, token, game, myAddress;
+
+function onLanguageChanged() {
+  if (log) log(t("mint.waiting"));
+}
+
+function buildNumberButtons() {
+  const wrap = document.getElementById("numberButtons");
+  wrap.innerHTML = "";
+  for (let n = 1; n <= 10; n++) {
+    const btn = document.createElement("button");
+    btn.textContent = String(n);
+    btn.style.cssText = "min-width:48px; margin:4px;";
+    btn.onclick = () => playGuess(n);
+    wrap.appendChild(btn);
+  }
+}
+buildNumberButtons();
+
+async function refreshInfo() {
+  const network = await provider.getNetwork();
+  document.getElementById("chainId").textContent = network.chainId.toString();
+  document.getElementById("networkWarn").textContent =
+    network.chainId === EXPECTED_CHAIN_ID ? "" : "⚠ переключите MetaMask на BNB Smart Chain (mainnet, 56)";
+
+  const [prize, cd, lastPlayed] = await Promise.all([
+    game.numberGuessPrize(),
+    game.cooldown(),
+    game.lastGuessAt(myAddress)
+  ]);
+  document.getElementById("prizeAmount").textContent = ethers.formatUnits(prize, 18) + " QUC";
+
+  const nextAt = Number(lastPlayed) + Number(cd);
+  const nowSec = Math.floor(Date.now() / 1000);
+  document.getElementById("nextPlay").textContent =
+    nextAt <= nowSec ? "сейчас" : new Date(nextAt * 1000).toLocaleString();
+}
+
+document.getElementById("connectBtn").onclick = async () => {
+  if (!window.ethereum) { log("MetaMask не найден в этом браузере."); return; }
+  if (GAME_ADDRESS === "0x0000000000000000000000000000000000000000") {
+    log("Игра ещё не развёрнута в основной сети — контракт готовится к запуску.");
+    return;
+  }
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  myAddress = await signer.getAddress();
+  document.getElementById("account").textContent = myAddress.slice(0,6) + "..." + myAddress.slice(-4);
+  token = new ethers.Contract(TOKEN_ADDRESS, TOKEN_ABI, signer);
+  game = new ethers.Contract(GAME_ADDRESS, GAME_ABI, signer);
+  await refreshInfo();
+  log("Кошелёк подключен: " + myAddress);
+};
+
+async function playGuess(n) {
+  if (!game) { log("Сначала подключите MetaMask."); return; }
+  try {
+    log("Загадываю число " + n + ", подтвердите в MetaMask...");
+    const tx = await game.guessNumber(n);
+    const receipt = await tx.wait();
+
+    const parsed = receipt.logs
+      .map((l) => { try { return game.interface.parseLog(l); } catch { return null; } })
+      .find((e) => e && e.name === "NumberGuessResult");
+
+    const box = document.getElementById("resultBox");
+    box.style.display = "flex";
+    if (parsed && parsed.args.won) {
+      const prize = ethers.formatUnits(parsed.args.prize, 18);
+      box.innerHTML = "<div class='reveal-pop' style='text-align:center;'><h3 style='color:var(--gold);'>🎉 Угадали! Выпало " + parsed.args.answer + "</h3><p>Вы получили " + prize + " QUC</p></div>";
+      log("Победа! Контракт загадал " + parsed.args.answer + ", вы получили " + prize + " QUC.");
+    } else if (parsed) {
+      box.innerHTML = "<div class='reveal-pop' style='text-align:center;'><h3>Не угадали. Выпало " + parsed.args.answer + "</h3><p>Попробуйте снова через 24 часа.</p></div>";
+      log("Мимо. Контракт загадал " + parsed.args.answer + ". Попробуйте снова через 24 часа.");
+    }
+    await refreshInfo();
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+}
+</script>
+</body>
+</html>

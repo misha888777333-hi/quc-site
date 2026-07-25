@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Игры QUC</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html" data-i18n="nav.home">Главная</a>
+    <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
+    <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
+    <a href="games.html" class="active" data-i18n="nav.games">Игры</a>
+  </nav>
+
+  <div style="text-align:center; margin-bottom: 32px;">
+    <h1 data-i18n="games.title">Мини-игры QUC</h1>
+    <p data-i18n="games.subtitle">Играйте и получайте QUC. «Угадай число» проверяется прямо в смарт-контракте — обмануть нельзя. Snake и Pong — это честные игры на скилл, но результат присылает браузер, поэтому награда за них скромная и капается раз в 24 часа.</p>
+  </div>
+
+  <div class="grid">
+    <a class="feature" href="guess.html">
+      <span class="icon">🎲</span>
+      <h3 data-i18n="games.card.guess.title">Угадай число</h3>
+      <p data-i18n="games.card.guess.text">Выберите число от 1 до 10 — контракт честно сверяет его со своим случайным числом.</p>
+    </a>
+    <a class="feature" href="snake.html">
+      <span class="icon">🐍</span>
+      <h3 data-i18n="games.card.snake.title">Змейка</h3>
+      <p data-i18n="games.card.snake.text">Классическая змейка. Чем больше яблок — тем больше награда (с капом раз в сутки).</p>
+    </a>
+    <a class="feature" href="pong.html">
+      <span class="icon">🏓</span>
+      <h3 data-i18n="games.card.pong.title">Пинг-понг</h3>
+      <p data-i18n="games.card.pong.text">Сыграйте против компьютера. Очки конвертируются в награду (с капом раз в сутки).</p>
+    </a>
+  </div>
+
+  <p style="text-align:center; font-size:13px;" data-i18n="games.dailynote">🔄 Новая попытка в Snake и Pong открывается каждые 24 часа — заходите каждый день за свежей наградой.</p>
+
+  <footer data-i18n="games.footer">Quantum Universe Coin · Игры</footer>
+</div>
+
+<script src="i18n.js"></script>
+</body>
+</html>

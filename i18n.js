@@ -1,6 +1,6 @@
 const TRANSLATIONS = {
 ru: {
-  "nav.home": "Главная", "nav.stake": "Стейкинг", "nav.mint": "Минт NFT",
+  "nav.home": "Главная", "nav.stake": "Стейкинг", "nav.mint": "Минт NFT", "nav.games": "Игры",
 
   "index.title": "Quantum Universe Coin",
   "index.subtitle": "Токен QUC на BNB Smart Chain — с реальным стейкингом и NFT-частицами, рождающимися из сожжённой энергии токена.",
@@ -79,10 +79,41 @@ ru: {
   "stake.stake.title": "Застейкать", "stake.stake.label": "Сколько QUC застейкать", "stake.stake.button": "Застейкать",
   "stake.withdraw.title": "Снять / забрать награду", "stake.withdraw.label": "Сколько QUC снять из стейка",
   "stake.withdraw.button": "Снять", "stake.claim.button": "Забрать награду", "stake.exit.button": "Снять всё и забрать награду",
-  "stake.footer": "Quantum Universe Coin · Staking"
+  "stake.footer": "Quantum Universe Coin · Staking",
+
+  "games.title": "Игровая аркада QUC",
+  "games.subtitle": "Три испытания квантовой вселенной — и в каждом вас ждёт настоящая награда в QUC прямо в кошелёк. Проверьте удачу, реакцию и нервы — выбор за вами.",
+  "games.card.guess.title": "Угадай число",
+  "games.card.guess.text": "Доверьтесь интуиции — назовите число от 1 до 10, и вселенная в ту же секунду откроет, ваш ли сегодня день.",
+  "games.card.snake.title": "Змейка",
+  "games.card.snake.text": "Скользите между звёзд, собирайте яблоки и растите — чем длиннее путь, тем ярче награда в конце.",
+  "games.card.pong.title": "Пинг-понг",
+  "games.card.pong.text": "Ракетка, реакция и ИИ-соперник, который не любит проигрывать. Каждое отбитое очко — это QUC.",
+  "games.dailynote": "🔄 Новая попытка в Snake и Pong открывается каждые 24 часа — заходите каждый день за свежей наградой.",
+  "games.footer": "Quantum Universe Coin · Игры",
+
+  "guess.title": "Угадай число",
+  "guess.subtitle": "Выберите число от 1 до 10. Смарт-контракт в этот же момент загадывает своё случайное число и сравнивает — если совпало, вы сразу получаете приз в QUC. Один раунд — раз в 24 часа на кошелёк.",
+  "guess.pick": "Выберите число",
+  "guess.button": "Загадать!",
+  "guess.footer": "Quantum Universe Coin · Угадай число",
+
+  "snake.title": "Змейка",
+  "snake.subtitle": "Управляйте стрелками (или свайпами на телефоне). Каждое яблоко — это очки. После завершения игры заберите награду в QUC (не чаще раза в сутки).",
+  "snake.start": "Начать игру",
+  "snake.score": "Очки",
+  "snake.claim": "Забрать награду",
+  "snake.footer": "Quantum Universe Coin · Змейка",
+
+  "pong.title": "Пинг-понг",
+  "pong.subtitle": "Управляйте ракеткой мышью или стрелками ↑ / ↓. Каждое очко против компьютера — это награда. После окончания матча заберите QUC (не чаще раза в сутки).",
+  "pong.start": "Начать матч",
+  "pong.score": "Счёт",
+  "pong.claim": "Забрать награду",
+  "pong.footer": "Quantum Universe Coin · Пинг-понг"
 },
 en: {
-  "nav.home": "Home", "nav.stake": "Staking", "nav.mint": "Mint NFT",
+  "nav.home": "Home", "nav.stake": "Staking", "nav.mint": "Mint NFT", "nav.games": "Games",
 
   "index.title": "Quantum Universe Coin",
   "index.subtitle": "QUC token on BNB Smart Chain — with real staking and NFT particles born from burned token energy.",
@@ -161,10 +192,41 @@ en: {
   "stake.stake.title": "Stake", "stake.stake.label": "How much QUC to stake", "stake.stake.button": "Stake",
   "stake.withdraw.title": "Withdraw / claim reward", "stake.withdraw.label": "How much QUC to withdraw",
   "stake.withdraw.button": "Withdraw", "stake.claim.button": "Claim reward", "stake.exit.button": "Withdraw all and claim reward",
-  "stake.footer": "Quantum Universe Coin · Staking"
+  "stake.footer": "Quantum Universe Coin · Staking",
+
+  "games.title": "QUC Game Arcade",
+  "games.subtitle": "Three challenges from the quantum universe — each one pays out a real QUC reward straight to your wallet. Test your luck, your reflexes, your nerve — pick your game.",
+  "games.card.guess.title": "Guess the Number",
+  "games.card.guess.text": "Trust your instinct — call a number from 1 to 10, and the universe reveals in an instant whether today is your day.",
+  "games.card.snake.title": "Snake",
+  "games.card.snake.text": "Glide between the stars, gather apples, and grow — the longer your trail, the brighter the reward at the end.",
+  "games.card.pong.title": "Pong",
+  "games.card.pong.text": "A paddle, quick reflexes, and an AI opponent that hates to lose. Every point you win is QUC in your pocket.",
+  "games.dailynote": "🔄 A fresh shot at Snake and Pong opens up every 24 hours — come back daily for a new reward.",
+  "games.footer": "Quantum Universe Coin · Games",
+
+  "guess.title": "Guess the Number",
+  "guess.subtitle": "Pick a number from 1 to 10. The smart contract picks its own random number at that exact moment and compares — if it matches, you get a QUC prize immediately. One round per 24 hours per wallet.",
+  "guess.pick": "Pick a number",
+  "guess.button": "Guess!",
+  "guess.footer": "Quantum Universe Coin · Guess the Number",
+
+  "snake.title": "Snake",
+  "snake.subtitle": "Control with arrow keys (or swipes on mobile). Each apple is a point. After the game ends, claim your QUC reward (once per day at most).",
+  "snake.start": "Start game",
+  "snake.score": "Score",
+  "snake.claim": "Claim reward",
+  "snake.footer": "Quantum Universe Coin · Snake",
+
+  "pong.title": "Pong",
+  "pong.subtitle": "Control the paddle with the mouse or ↑ / ↓ arrows. Every point against the computer earns a reward. After the match ends, claim your QUC (once per day at most).",
+  "pong.start": "Start match",
+  "pong.score": "Score",
+  "pong.claim": "Claim reward",
+  "pong.footer": "Quantum Universe Coin · Pong"
 },
 zh: {
-  "nav.home": "首页", "nav.stake": "质押", "nav.mint": "铸造NFT",
+  "nav.home": "首页", "nav.stake": "质押", "nav.mint": "铸造NFT", "nav.games": "游戏",
 
   "index.title": "Quantum Universe Coin",
   "index.subtitle": "QUC 是 BNB 智能链上的代币 —— 拥有真实质押收益，以及由燃烧代币能量诞生的 NFT 粒子。",
@@ -243,10 +305,41 @@ zh: {
   "stake.stake.title": "质押", "stake.stake.label": "质押多少 QUC", "stake.stake.button": "质押",
   "stake.withdraw.title": "提取 / 领取奖励", "stake.withdraw.label": "从质押中提取多少 QUC",
   "stake.withdraw.button": "提取", "stake.claim.button": "领取奖励", "stake.exit.button": "提取全部并领取奖励",
-  "stake.footer": "Quantum Universe Coin · Staking"
+  "stake.footer": "Quantum Universe Coin · Staking",
+
+  "games.title": "QUC 游戏乐园",
+  "games.subtitle": "来自量子宇宙的三项挑战——每一项都会把真实的 QUC 奖励直接送进你的钱包。试试你的运气、反应力和胆量——挑一个开始吧。",
+  "games.card.guess.title": "猜数字",
+  "games.card.guess.text": "相信你的直觉——喊出 1 到 10 之间的一个数字，宇宙会立刻揭晓今天是不是你的幸运日。",
+  "games.card.snake.title": "贪吃蛇",
+  "games.card.snake.text": "在群星之间穿梭，收集苹果，不断成长——身形越长，终点的奖励就越耀眼。",
+  "games.card.pong.title": "乒乓球",
+  "games.card.pong.text": "球拍、反应速度，还有一个绝不服输的 AI 对手。你赢下的每一分都是口袋里的 QUC。",
+  "games.dailynote": "🔄 贪吃蛇和乒乓球每 24 小时刷新一次机会——每天回来领取新的奖励。",
+  "games.footer": "Quantum Universe Coin · 游戏",
+
+  "guess.title": "猜数字",
+  "guess.subtitle": "选择 1 到 10 之间的数字。智能合约会在同一时刻生成自己的随机数并比对——如果一致，立即获得 QUC 奖励。每个钱包每 24 小时一轮。",
+  "guess.pick": "选择数字",
+  "guess.button": "猜！",
+  "guess.footer": "Quantum Universe Coin · 猜数字",
+
+  "snake.title": "贪吃蛇",
+  "snake.subtitle": "使用方向键控制（手机上可滑动）。每个苹果算一分。游戏结束后领取 QUC 奖励（每天最多一次）。",
+  "snake.start": "开始游戏",
+  "snake.score": "分数",
+  "snake.claim": "领取奖励",
+  "snake.footer": "Quantum Universe Coin · 贪吃蛇",
+
+  "pong.title": "乒乓球",
+  "pong.subtitle": "用鼠标或 ↑ / ↓ 方向键控制球拍。每赢电脑一分都会获得奖励。比赛结束后领取 QUC（每天最多一次）。",
+  "pong.start": "开始比赛",
+  "pong.score": "比分",
+  "pong.claim": "领取奖励",
+  "pong.footer": "Quantum Universe Coin · 乒乓球"
 },
 es: {
-  "nav.home": "Inicio", "nav.stake": "Staking", "nav.mint": "Mint NFT",
+  "nav.home": "Inicio", "nav.stake": "Staking", "nav.mint": "Mint NFT", "nav.games": "Juegos",
 
   "index.title": "Quantum Universe Coin",
   "index.subtitle": "Token QUC en BNB Smart Chain — con staking real y partículas NFT nacidas de la energía del token quemado.",
@@ -325,7 +418,38 @@ es: {
   "stake.stake.title": "Hacer staking", "stake.stake.label": "Cuánto QUC stakear", "stake.stake.button": "Stakear",
   "stake.withdraw.title": "Retirar / reclamar recompensa", "stake.withdraw.label": "Cuánto QUC retirar del staking",
   "stake.withdraw.button": "Retirar", "stake.claim.button": "Reclamar recompensa", "stake.exit.button": "Retirar todo y reclamar recompensa",
-  "stake.footer": "Quantum Universe Coin · Staking"
+  "stake.footer": "Quantum Universe Coin · Staking",
+
+  "games.title": "Arcade QUC",
+  "games.subtitle": "Tres desafíos del universo cuántico — cada uno paga una recompensa real en QUC directo a tu billetera. Pon a prueba tu suerte, tus reflejos y tus nervios — elige tu juego.",
+  "games.card.guess.title": "Adivina el número",
+  "games.card.guess.text": "Confía en tu instinto — elige un número del 1 al 10, y el universo revela al instante si hoy es tu día de suerte.",
+  "games.card.snake.title": "Snake",
+  "games.card.snake.text": "Deslízate entre las estrellas, recoge manzanas y crece — cuanto más larga tu cola, más brillante la recompensa al final.",
+  "games.card.pong.title": "Pong",
+  "games.card.pong.text": "Una paleta, reflejos rápidos y un rival de IA que odia perder. Cada punto que ganas es QUC en tu bolsillo.",
+  "games.dailynote": "🔄 Snake y Pong abren una nueva oportunidad cada 24 horas — vuelve cada día por una recompensa fresca.",
+  "games.footer": "Quantum Universe Coin · Juegos",
+
+  "guess.title": "Adivina el número",
+  "guess.subtitle": "Elige un número del 1 al 10. El contrato inteligente elige su propio número aleatorio en ese mismo momento y lo compara — si coincide, recibes un premio en QUC de inmediato. Una ronda cada 24 horas por billetera.",
+  "guess.pick": "Elige un número",
+  "guess.button": "¡Adivinar!",
+  "guess.footer": "Quantum Universe Coin · Adivina el número",
+
+  "snake.title": "Snake",
+  "snake.subtitle": "Controla con las flechas (o deslizando en el móvil). Cada manzana es un punto. Al terminar la partida, reclama tu recompensa en QUC (como máximo una vez al día).",
+  "snake.start": "Iniciar juego",
+  "snake.score": "Puntos",
+  "snake.claim": "Reclamar recompensa",
+  "snake.footer": "Quantum Universe Coin · Snake",
+
+  "pong.title": "Pong",
+  "pong.subtitle": "Controla la paleta con el ratón o las flechas ↑ / ↓. Cada punto contra la computadora gana una recompensa. Al terminar el partido, reclama tu QUC (como máximo una vez al día).",
+  "pong.start": "Iniciar partido",
+  "pong.score": "Marcador",
+  "pong.claim": "Reclamar recompensa",
+  "pong.footer": "Quantum Universe Coin · Pong"
 }
 };
 

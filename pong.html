@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Пинг-понг — QUC</title>
+<link rel="stylesheet" href="style.css" />
+<style>
+  #gameCanvas { display:block; margin: 0 auto; background: rgba(0,0,0,0.4); border: 1px solid var(--border-glow); border-radius: 12px; max-width: 100%; touch-action: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html" data-i18n="nav.home">Главная</a>
+    <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
+    <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
+    <a href="games.html" class="active" data-i18n="nav.games">Игры</a>
+  </nav>
+
+  <div style="text-align:center; margin-bottom: 32px;">
+    <h1 data-i18n="pong.title">Пинг-понг</h1>
+    <p data-i18n="pong.subtitle">Управляйте ракеткой мышью или стрелками ↑ / ↓. Каждое очко против компьютера — это награда. После окончания матча заберите QUC (не чаще раза в сутки).</p>
+  </div>
+
+  <div class="card">
+    <button id="connectBtn" data-i18n="common.connect">Подключить кошелёк</button>
+    <div class="stat"><span data-i18n="common.account">Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat"><span data-i18n="common.chainid">Сеть (chainId)</span><span id="chainId">—</span></div>
+    <p class="warn" id="networkWarn"></p>
+  </div>
+
+  <div class="card" style="text-align:center;">
+    <canvas id="gameCanvas" width="480" height="320"></canvas>
+    <div class="stat" style="max-width:200px; margin: 12px auto 0;"><span data-i18n="pong.score">Счёт</span><span id="scoreVal">0 : 0</span></div>
+    <button id="startBtn" data-i18n="pong.start">Начать матч</button>
+    <button id="claimBtn" data-i18n="pong.claim" style="display:none;">Забрать награду</button>
+  </div>
+
+  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
+
+  <footer data-i18n="pong.footer">Quantum Universe Coin · Пинг-понг</footer>
+</div>
+
+<script src="i18n.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
+const GAME_ADDRESS = "0x42174eA4d650066FF05634216C7B246E506cb1cc";
+const EXPECTED_CHAIN_ID = 56n;
+const GAME_ABI = [
+  "function claimSkillReward(string,uint256) external",
+  "function skillGameMaxReward() view returns (uint256)",
+  "function cooldown() view returns (uint256)",
+  "function lastSkillClaimAt(address,string) view returns (uint256)"
+];
+const PER_POINT_REWARD = ethers.parseUnits("1", 18);
+
+const log = (msg) => { document.getElementById("log").textContent = msg; };
+let provider, signer, game, myAddress;
+
+function onLanguageChanged() {
+  if (log) log(t("mint.waiting"));
+}
+
+document.getElementById("connectBtn").onclick = async () => {
+  if (!window.ethereum) { log("MetaMask не найден в этом браузере."); return; }
+  if (GAME_ADDRESS === "0x0000000000000000000000000000000000000000") {
+    log("Игра ещё не развёрнута в основной сети — контракт готовится к запуску.");
+    return;
+  }
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  myAddress = await signer.getAddress();
+  document.getElementById("account").textContent = myAddress.slice(0,6) + "..." + myAddress.slice(-4);
+  game = new ethers.Contract(GAME_ADDRESS, GAME_ABI, signer);
+  const network = await provider.getNetwork();
+  document.getElementById("chainId").textContent = network.chainId.toString();
+  document.getElementById("networkWarn").textContent =
+    network.chainId === EXPECTED_CHAIN_ID ? "" : "⚠ переключите MetaMask на BNB Smart Chain (mainnet, 56)";
+  log("Кошелёк подключен: " + myAddress);
+};
+
+document.getElementById("claimBtn").onclick = async () => {
+  if (!game) { log("Сначала подключите MetaMask."); return; }
+  try {
+    const rewardWei = PER_POINT_REWARD * BigInt(playerScore);
+    log("Забираю награду за " + playerScore + " очков, подтвердите в MetaMask...");
+    const tx = await game.claimSkillReward("pong", rewardWei);
+    await tx.wait();
+    log("Готово! Награда за пинг-понг получена (капается контрактом при необходимости).");
+    document.getElementById("claimBtn").style.display = "none";
+  } catch (err) {
+    log("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+
+// --- Game logic ---
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+const W = canvas.width, H = canvas.height;
+const PADDLE_W = 10, PADDLE_H = 60;
+const WIN_SCORE = 5;
+
+let playerY, aiY, ballX, ballY, ballVX, ballVY, playerScore, aiScore, running, loopId;
+
+function resetMatch() {
+  playerY = H / 2 - PADDLE_H / 2;
+  aiY = H / 2 - PADDLE_H / 2;
+  playerScore = 0;
+  aiScore = 0;
+  document.getElementById("scoreVal").textContent = "0 : 0";
+  document.getElementById("claimBtn").style.display = "none";
+  resetBall();
+  running = true;
+}
+
+function resetBall() {
+  ballX = W / 2;
+  ballY = H / 2;
+  const angle = (Math.random() * 0.6 - 0.3);
+  const dir = Math.random() < 0.5 ? -1 : 1;
+  ballVX = 4 * dir;
+  ballVY = 4 * angle;
+}
+
+function draw() {
+  ctx.fillStyle = "rgba(0,0,0,0.4)";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.strokeStyle = "rgba(255,255,255,0.15)";
+  ctx.setLineDash([6, 10]);
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 0);
+  ctx.lineTo(W / 2, H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = "#5DCAA5";
+  ctx.fillRect(10, playerY, PADDLE_W, PADDLE_H);
+  ctx.fillStyle = "#ff8a65";
+  ctx.fillRect(W - 20, aiY, PADDLE_W, PADDLE_H);
+
+  ctx.fillStyle = "#FAC775";
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, 6, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function tick() {
+  if (!running) return;
+
+  ballX += ballVX;
+  ballY += ballVY;
+
+  if (ballY <= 0 || ballY >= H) ballVY *= -1;
+
+  if (ballX <= 10 + PADDLE_W && ballX >= 10 && ballY >= playerY && ballY <= playerY + PADDLE_H) {
+    ballVX = Math.abs(ballVX) * 1.05;
+    ballVY += (ballY - (playerY + PADDLE_H / 2)) * 0.1;
+  }
+  if (ballX >= W - 20 - PADDLE_W && ballX <= W - 20 && ballY >= aiY && ballY <= aiY + PADDLE_H) {
+    ballVX = -Math.abs(ballVX) * 1.05;
+    ballVY += (ballY - (aiY + PADDLE_H / 2)) * 0.1;
+  }
+
+  if (ballX < 0) {
+    aiScore++;
+    checkMatchEnd();
+  } else if (ballX > W) {
+    playerScore++;
+    checkMatchEnd();
+  }
+
+  const aiCenter = aiY + PADDLE_H / 2;
+  if (aiCenter < ballY - 10) aiY += 3.2;
+  else if (aiCenter > ballY + 10) aiY -= 3.2;
+  aiY = Math.max(0, Math.min(H - PADDLE_H, aiY));
+
+  draw();
+}
+
+function checkMatchEnd() {
+  document.getElementById("scoreVal").textContent = playerScore + " : " + aiScore;
+  if (playerScore >= WIN_SCORE || aiScore >= WIN_SCORE) {
+    endMatch();
+  } else {
+    resetBall();
+  }
+}
+
+function endMatch() {
+  running = false;
+  clearInterval(loopId);
+  const won = playerScore > aiScore;
+  log("Матч окончен! Счёт " + playerScore + " : " + aiScore + (won ? " — вы выиграли! " : " — вы проиграли. ") +
+      (playerScore > 0 ? "Можно забрать награду за " + playerScore + " очков." : ""));
+  if (playerScore > 0) {
+    document.getElementById("claimBtn").style.display = "inline-block";
+  }
+}
+
+document.getElementById("startBtn").onclick = () => {
+  clearInterval(loopId);
+  resetMatch();
+  draw();
+  loopId = setInterval(tick, 16);
+};
+
+canvas.addEventListener("mousemove", (e) => {
+  if (!running) return;
+  const rect = canvas.getBoundingClientRect();
+  const scaleY = H / rect.height;
+  playerY = (e.clientY - rect.top) * scaleY - PADDLE_H / 2;
+  playerY = Math.max(0, Math.min(H - PADDLE_H, playerY));
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  if (!running) return;
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const scaleY = H / rect.height;
+  playerY = (e.touches[0].clientY - rect.top) * scaleY - PADDLE_H / 2;
+  playerY = Math.max(0, Math.min(H - PADDLE_H, playerY));
+}, { passive: false });
+
+document.addEventListener("keydown", (e) => {
+  if (!running) return;
+  if (e.key === "ArrowUp") playerY = Math.max(0, playerY - 20);
+  else if (e.key === "ArrowDown") playerY = Math.min(H - PADDLE_H, playerY + 20);
+});
+
+playerY = H / 2 - PADDLE_H / 2;
+aiY = H / 2 - PADDLE_H / 2;
+playerScore = 0; aiScore = 0;
+resetBall();
+running = false;
+draw();
+</script>
+</body>
+</html>
