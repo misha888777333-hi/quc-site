@@ -28,6 +28,7 @@ ru: {
   "index.links.title": "Ссылки",
   "index.links.source": "Исходный код на BscScan →",
   "index.links.pool": "Пул ликвидности на PancakeSwap →",
+  "index.links.telegram": "Сообщество в Telegram →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Подключить кошелёк",
@@ -141,6 +142,7 @@ en: {
   "index.links.title": "Links",
   "index.links.source": "Source code on BscScan →",
   "index.links.pool": "Liquidity pool on PancakeSwap →",
+  "index.links.telegram": "Telegram community →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Connect wallet",
@@ -254,6 +256,7 @@ zh: {
   "index.links.title": "链接",
   "index.links.source": "在 BscScan 查看源代码 →",
   "index.links.pool": "PancakeSwap 流动性池 →",
+  "index.links.telegram": "Telegram 社区 →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "连接钱包",
@@ -367,6 +370,7 @@ es: {
   "index.links.title": "Enlaces",
   "index.links.source": "Código fuente en BscScan →",
   "index.links.pool": "Pool de liquidez en PancakeSwap →",
+  "index.links.telegram": "Comunidad en Telegram →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Conectar billetera",
