@@ -191,6 +191,18 @@ button:hover {
 
 .warn { color: var(--coral); font-weight: 600; }
 
+.info-note {
+  font-size: 13px;
+  color: var(--text-dim);
+  background: rgba(93,202,165,0.08);
+  border: 1px solid rgba(93,202,165,0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+.info-note a { color: var(--teal); }
+
 .result-card img { display: block; border-radius: 14px; margin: 14px 0; box-shadow: 0 0 30px rgba(155,140,255,0.3); }
 
 .odds-row {

@@ -33,6 +33,7 @@ ru: {
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Подключить кошелёк",
+  "common.walletwarningnote": "Контракт совсем новый, поэтому MetaMask иногда показывает предупреждение о безопасности по умолчанию для свежих адресов — это известная задержка баз безопасности, а не признак взлома. Исходный код открыт и проверен на BscScan:",
   "common.account": "Аккаунт", "common.notconnected": "не подключен",
   "common.chainid": "Сеть (chainId)",
 
@@ -148,6 +149,7 @@ en: {
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Connect wallet",
+  "common.walletwarningnote": "This contract is very new, so MetaMask sometimes shows a default security warning for fresh addresses — that's a known lag in security databases, not a sign of a hack. The source code is open and verified on BscScan:",
   "common.account": "Account", "common.notconnected": "not connected",
   "common.chainid": "Network (chainId)",
 
@@ -262,6 +264,7 @@ zh: {
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "连接钱包",
+  "common.walletwarningnote": "这个合约刚上线不久，MetaMask 有时会对全新地址默认显示安全警告——这只是安全数据库更新滞后，并不代表被黑或有问题。源代码已公开并在 BscScan 上验证：",
   "common.account": "账户", "common.notconnected": "未连接",
   "common.chainid": "网络 (chainId)",
 
@@ -378,6 +381,7 @@ es: {
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Conectar billetera",
+  "common.walletwarningnote": "Este contrato es muy nuevo, así que MetaMask a veces muestra una advertencia de seguridad predeterminada para direcciones recientes — es un retraso conocido de las bases de datos de seguridad, no una señal de hackeo. El código fuente está abierto y verificado en BscScan:",
   "common.account": "Cuenta", "common.notconnected": "no conectada",
   "common.chainid": "Red (chainId)",
 
