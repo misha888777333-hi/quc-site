@@ -29,6 +29,7 @@ ru: {
   "index.links.source": "Исходный код на BscScan →",
   "index.links.pool": "Пул ликвидности на PancakeSwap →",
   "index.links.telegram": "Сообщество в Telegram →",
+  "index.links.twitter": "Проект в X →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Подключить кошелёк",
@@ -143,6 +144,7 @@ en: {
   "index.links.source": "Source code on BscScan →",
   "index.links.pool": "Liquidity pool on PancakeSwap →",
   "index.links.telegram": "Telegram community →",
+  "index.links.twitter": "Project on X →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Connect wallet",
@@ -320,6 +322,7 @@ zh: {
   "games.card.pong.text": "球拍、反应速度，还有一个绝不服输的 AI 对手。你赢下的每一分都是口袋里的 QUC。",
   "games.dailynote": "🔄 贪吃蛇和乒乓球每 24 小时刷新一次机会——每天回来领取新的奖励。",
   "games.footer": "Quantum Universe Coin · 游戏",
+  "index.links.twitter": "项目 X (推特) →",
 
   "guess.title": "猜数字",
   "guess.subtitle": "选择 1 到 10 之间的数字。智能合约会在同一时刻生成自己的随机数并比对——如果一致，立即获得 QUC 奖励。每个钱包每 24 小时一轮。",
@@ -371,6 +374,7 @@ es: {
   "index.links.source": "Código fuente en BscScan →",
   "index.links.pool": "Pool de liquidez en PancakeSwap →",
   "index.links.telegram": "Comunidad en Telegram →",
+  "index.links.twitter": "Proyecto en X →",
   "index.footer": "Quantum Universe Coin · BNB Smart Chain",
 
   "common.connect": "Conectar billetera",
