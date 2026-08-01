@@ -41,9 +41,101 @@
 
   <p style="text-align:center; font-size:13px;" data-i18n="games.dailynote">🔄 Новая попытка в Snake и Pong открывается каждые 24 часа — заходите каждый день за свежей наградой.</p>
 
+  <div class="card">
+    <h2 data-i18n="games.referral.title">Пригласи друга</h2>
+    <p data-i18n="games.referral.text">Поделитесь своей ссылкой — как только приглашённый друг сыграет первую игру, вы оба получите QUC.</p>
+    <button id="connectBtn" data-i18n="common.connect">Подключить кошелёк</button>
+    <div class="stat"><span data-i18n="common.account">Аккаунт</span><span id="account">не подключен</span></div>
+    <div class="stat" id="linkRow" style="display:none;"><span data-i18n="games.referral.yourlink">Ваша ссылка</span><span id="refLink">—</span></div>
+    <button id="copyRefBtn" data-i18n="games.referral.copy" style="display:none;">Скопировать ссылку</button>
+    <div class="stat" id="countRow" style="display:none;"><span data-i18n="games.referral.count">Приглашено друзей</span><span id="refCount">0</span></div>
+
+    <div id="claimRefSection" style="display:none; margin-top:16px; border-top:1px solid var(--border-glow); padding-top:16px;">
+      <p data-i18n="games.referral.referredby">Вас кто-то пригласил! Сыграйте в любую игру, а затем заберите бонус:</p>
+      <button id="claimRefBtn" data-i18n="games.referral.claim">Забрать бонус за приглашение</button>
+    </div>
+  </div>
+
   <footer data-i18n="games.footer">Quantum Universe Coin · Игры</footer>
 </div>
 
 <script src="i18n.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+<script>
+const TOKEN_ADDRESS = "0x3546736d9cB1BeABd0BE66b686F608508ec1162F";
+const REFERRAL_ADDRESS = "0x195e30b5D99B716A2E78C3B0aCC22274684386fD";
+const EXPECTED_CHAIN_ID = 56n;
+
+const REFERRAL_ABI = [
+  "function claimReferralBonus(address referrer) external",
+  "function hasClaimed(address) view returns (bool)",
+  "function referralCount(address) view returns (uint256)"
+];
+
+let provider, signer, referral, myAddress;
+
+(function captureReferrerFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get("ref");
+  if (ref && /^0x[a-fA-F0-9]{40}$/.test(ref)) {
+    localStorage.setItem("quc_referrer", ref);
+  }
+})();
+
+async function refreshReferralInfo() {
+  document.getElementById("linkRow").style.display = "flex";
+  document.getElementById("refLink").textContent = window.location.origin + window.location.pathname + "?ref=" + myAddress;
+  document.getElementById("copyRefBtn").style.display = "inline-block";
+
+  if (REFERRAL_ADDRESS === "0x0000000000000000000000000000000000000000") return;
+
+  const count = await referral.referralCount(myAddress);
+  document.getElementById("countRow").style.display = "flex";
+  document.getElementById("refCount").textContent = count.toString();
+
+  const storedReferrer = localStorage.getItem("quc_referrer");
+  if (storedReferrer && storedReferrer.toLowerCase() !== myAddress.toLowerCase()) {
+    const alreadyClaimed = await referral.hasClaimed(myAddress);
+    if (!alreadyClaimed) {
+      document.getElementById("claimRefSection").style.display = "block";
+    }
+  }
+}
+
+document.getElementById("connectBtn").onclick = async () => {
+  if (!window.ethereum) { alert("MetaMask не найден в этом браузере."); return; }
+  provider = new ethers.BrowserProvider(window.ethereum);
+  await provider.send("eth_requestAccounts", []);
+  signer = await provider.getSigner();
+  myAddress = await signer.getAddress();
+  document.getElementById("account").textContent = myAddress.slice(0, 6) + "..." + myAddress.slice(-4);
+  if (REFERRAL_ADDRESS !== "0x0000000000000000000000000000000000000000") {
+    referral = new ethers.Contract(REFERRAL_ADDRESS, REFERRAL_ABI, signer);
+  }
+  await refreshReferralInfo();
+};
+
+document.getElementById("copyRefBtn").onclick = async () => {
+  const link = document.getElementById("refLink").textContent;
+  await navigator.clipboard.writeText(link);
+  const btn = document.getElementById("copyRefBtn");
+  const original = btn.textContent;
+  btn.textContent = "✓";
+  setTimeout(() => { btn.textContent = original; }, 1500);
+};
+
+document.getElementById("claimRefBtn").onclick = async () => {
+  if (!referral) return;
+  const storedReferrer = localStorage.getItem("quc_referrer");
+  try {
+    const tx = await referral.claimReferralBonus(storedReferrer);
+    await tx.wait();
+    document.getElementById("claimRefSection").innerHTML = "<p>🎉 Бонус получен!</p>";
+    await refreshReferralInfo();
+  } catch (err) {
+    alert("Ошибка: " + (err?.shortMessage || err?.message || String(err)));
+  }
+};
+</script>
 </body>
 </html>
