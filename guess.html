@@ -120,7 +120,7 @@ async function playGuess(n) {
   if (!game) { log("Сначала подключите MetaMask."); return; }
   try {
     log("Загадываю число " + n + ", подтвердите в MetaMask...");
-    const tx = await game.guessNumber(n);
+    const tx = await game.guessNumber(n, { gasLimit: 200000n });
     const receipt = await tx.wait();
 
     const parsed = receipt.logs

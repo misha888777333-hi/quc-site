@@ -128,7 +128,7 @@ document.getElementById("claimRefBtn").onclick = async () => {
   if (!referral) return;
   const storedReferrer = localStorage.getItem("quc_referrer");
   try {
-    const tx = await referral.claimReferralBonus(storedReferrer);
+    const tx = await referral.claimReferralBonus(storedReferrer, { gasLimit: 200000n });
     await tx.wait();
     document.getElementById("claimRefSection").innerHTML = "<p>🎉 Бонус получен!</p>";
     await refreshReferralInfo();

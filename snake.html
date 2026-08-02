@@ -89,7 +89,7 @@ document.getElementById("claimBtn").onclick = async () => {
   try {
     const rewardWei = PER_APPLE_REWARD * BigInt(score);
     log("Забираю награду за " + score + " очков, подтвердите в MetaMask...");
-    const tx = await game.claimSkillReward("snake", rewardWei);
+    const tx = await game.claimSkillReward("snake", rewardWei, { gasLimit: 200000n });
     await tx.wait();
     log("Готово! Награда за игру в змейку получена (капается контрактом при необходимости).");
     document.getElementById("claimBtn").style.display = "none";
