@@ -11,7 +11,7 @@
 
   <nav>
     <a href="index.html" data-i18n="nav.home">Главная</a>
-    <a href="stake.html" class="active" data-i18n="nav.stake">Стейкинг</a>
+    <a href="stake.html" class="active" aria-current="page" data-i18n="nav.stake">Стейкинг</a>
     <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
     <a href="games.html" data-i18n="nav.games">Игры</a>
   </nav>
@@ -35,21 +35,21 @@
 
   <div class="card">
     <h2 data-i18n="stake.stake.title">Застейкать</h2>
-    <label data-i18n="stake.stake.label">Сколько QUC застейкать</label>
+    <label for="stakeAmount" data-i18n="stake.stake.label">Сколько QUC застейкать</label>
     <input id="stakeAmount" placeholder="Например: 1000" />
     <button id="stakeBtn" data-i18n="stake.stake.button">Застейкать</button>
   </div>
 
   <div class="card">
     <h2 data-i18n="stake.withdraw.title">Снять / забрать награду</h2>
-    <label data-i18n="stake.withdraw.label">Сколько QUC снять из стейка</label>
+    <label for="withdrawAmount" data-i18n="stake.withdraw.label">Сколько QUC снять из стейка</label>
     <input id="withdrawAmount" placeholder="Например: 500" />
     <button id="withdrawBtn" data-i18n="stake.withdraw.button">Снять</button>
     <button id="claimBtn" data-i18n="stake.claim.button">Забрать награду</button>
     <button id="exitBtn" data-i18n="stake.exit.button">Снять всё и забрать награду</button>
   </div>
 
-  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
+  <div id="log" data-i18n="mint.waiting" aria-live="polite">Ожидание действий...</div>
 
   <footer data-i18n="stake.footer">Quantum Universe Coin · Staking</footer>
 </div>

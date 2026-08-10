@@ -16,7 +16,7 @@
     <a href="index.html" data-i18n="nav.home">Главная</a>
     <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
     <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
-    <a href="games.html" class="active" data-i18n="nav.games">Игры</a>
+    <a href="games.html" class="active" aria-current="page" data-i18n="nav.games">Игры</a>
   </nav>
 
   <div style="text-align:center; margin-bottom: 32px;">
@@ -33,13 +33,13 @@
   </div>
 
   <div class="card" style="text-align:center;">
-    <canvas id="gameCanvas" width="480" height="320"></canvas>
+    <canvas id="gameCanvas" width="480" height="320" role="img" aria-label="Игровое поле Пинг-понга. Счёт отображается ниже под полем."></canvas>
     <div class="stat" style="max-width:200px; margin: 12px auto 0;"><span data-i18n="pong.score">Счёт</span><span id="scoreVal">0 : 0</span></div>
     <button id="startBtn" data-i18n="pong.start">Начать матч</button>
     <button id="claimBtn" data-i18n="pong.claim" style="display:none;">Забрать награду</button>
   </div>
 
-  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
+  <div id="log" data-i18n="mint.waiting" aria-live="polite">Ожидание действий...</div>
 
   <footer data-i18n="pong.footer">Quantum Universe Coin · Пинг-понг</footer>
 </div>

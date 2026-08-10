@@ -12,7 +12,7 @@
   <nav>
     <a href="index.html" data-i18n="nav.home">Главная</a>
     <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
-    <a href="mint.html" class="active" data-i18n="nav.mint">Минт NFT</a>
+    <a href="mint.html" class="active" aria-current="page" data-i18n="nav.mint">Минт NFT</a>
     <a href="games.html" data-i18n="nav.games">Игры</a>
   </nav>
 
@@ -70,9 +70,9 @@
       <span id="fusionCost">—</span>.
       <span data-i18n="mint.fusion.text6">ID своих частиц смотрите в результате минта выше или в MetaMask (вкладка NFT).</span>
     </p>
-    <label data-i18n="mint.fusion.id1">ID первой частицы</label>
+    <label for="fuseId1" data-i18n="mint.fusion.id1">ID первой частицы</label>
     <input id="fuseId1" placeholder="Например: 0" />
-    <label data-i18n="mint.fusion.id2">ID второй частицы</label>
+    <label for="fuseId2" data-i18n="mint.fusion.id2">ID второй частицы</label>
     <input id="fuseId2" placeholder="Например: 2" />
     <button id="fuseBtn" data-i18n="mint.fusion.button">Слить частицы</button>
     <div id="fuseResult" class="reveal-box"></div>
@@ -85,7 +85,7 @@
        target="_blank" rel="noopener" style="color: var(--teal);" data-i18n="mint.recent.link">Смотреть все Mint и Fusion события →</a>
   </div>
 
-  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
+  <div id="log" data-i18n="mint.waiting" aria-live="polite">Ожидание действий...</div>
 
   <footer data-i18n="mint.footer">Quantum Universe Coin · Quantum Particle NFT</footer>
 </div>
@@ -146,6 +146,11 @@ function closeTutorial() {
 
 document.getElementById("helpBtn").onclick = openTutorial;
 document.getElementById("tutSkip").onclick = closeTutorial;
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && document.getElementById("tutorialOverlay").style.display !== "none") {
+    closeTutorial();
+  }
+});
 document.getElementById("tutNext").onclick = () => {
   if (tutStep === TUTORIAL_STEPS.length - 1) { closeTutorial(); return; }
   tutStep++;
@@ -200,7 +205,7 @@ async function reveal(containerId, actionPromise) {
   el.innerHTML =
     '<div class="reveal-pop ' + rarityClass + '" style="text-align:center;">' +
     "<h3>" + json.name + (extra || "") + "</h3>" +
-    "<img src='" + json.image + "' width='260' height='260' />" +
+    "<img src='" + json.image + "' width='260' height='260' alt='" + json.name.replace(/'/g, "") + ", " + rarity + "' />" +
     "<p>" + json.attributes.map(a => a.trait_type + ": " + a.value).join(" · ") + "</p>" +
     "</div>";
   playChime(rarityIdx);

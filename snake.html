@@ -16,7 +16,7 @@
     <a href="index.html" data-i18n="nav.home">Главная</a>
     <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
     <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
-    <a href="games.html" class="active" data-i18n="nav.games">Игры</a>
+    <a href="games.html" class="active" aria-current="page" data-i18n="nav.games">Игры</a>
   </nav>
 
   <div style="text-align:center; margin-bottom: 32px;">
@@ -33,13 +33,13 @@
   </div>
 
   <div class="card" style="text-align:center;">
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <canvas id="gameCanvas" width="400" height="400" role="img" aria-label="Игровое поле Змейки. Счёт отображается ниже под полем."></canvas>
     <div class="stat" style="max-width:200px; margin: 12px auto 0;"><span data-i18n="snake.score">Очки</span><span id="scoreVal">0</span></div>
     <button id="startBtn" data-i18n="snake.start">Начать игру</button>
     <button id="claimBtn" data-i18n="snake.claim" style="display:none;">Забрать награду</button>
   </div>
 
-  <div id="log" data-i18n="mint.waiting">Ожидание действий...</div>
+  <div id="log" data-i18n="mint.waiting" aria-live="polite">Ожидание действий...</div>
 
   <footer data-i18n="snake.footer">Quantum Universe Coin · Змейка</footer>
 </div>
