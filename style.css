@@ -25,22 +25,6 @@ body {
   overflow-x: hidden;
 }
 
-.hero-coin {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  height: 620px;
-  z-index: -1;
-  pointer-events: none;
-  background-image: url('quc-site-bg.jpg');
-  background-size: cover;
-  background-position: center 30%;
-  -webkit-mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 65%, transparent 100%);
-}
-
 body::before {
   content: "";
   position: fixed;
