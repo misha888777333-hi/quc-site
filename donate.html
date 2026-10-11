@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>QUC — Support / Поддержать</title>
+<title>QUC — Поддержать</title>
 <link rel="icon" type="image/jpeg" href="quc-coin-cosmic.jpg" />
 <link rel="stylesheet" href="style.css" />
 </head>
@@ -61,7 +61,7 @@
 
 </div>
 
-<script src="i18n.js"></script>
+<script src="i18n.js?v=20261011b"></script>
 <script>
 const DONATE = "0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58";           // публичный адрес копилки (11.10.2026)
 const PAIR = "0x08239328707e9965c5b1d4e41b9ddc2f23aaf15c";             // PancakeSwap V2 QUC/WBNB
@@ -84,7 +84,8 @@ function render() {
   if (state.quc !== null) { set("poolQuc", fmt(state.quc, 0)); set("poolBnb", fmt(state.bnb, 6)); }
 }
 // вызывается из i18n.js при смене языка
-function onLanguageChanged() { render(); if (statusKey) setStatus(statusKey, statusExtra); }
+function onLanguageChanged() { document.title = "QUC — " + t("nav.donate"); render(); if (statusKey) setStatus(statusKey, statusExtra); }
+document.title = "QUC — " + t("nav.donate");
 
 document.getElementById("copy").onclick = () => {
   navigator.clipboard.writeText(DONATE).then(() => {

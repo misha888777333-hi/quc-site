@@ -644,12 +644,17 @@ function t(key) {
   return (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) || TRANSLATIONS.ru[key] || key;
 }
 
+// нет перевода (например, устаревший кэш) -> оставляем текст из самой страницы, а не имя ключа
+function hasKey(key) { return !!TRANSLATIONS.ru[key]; }
+
 function applyTranslations() {
   document.querySelectorAll("[data-i18n]").forEach(el => {
-    el.textContent = t(el.getAttribute("data-i18n"));
+    const k = el.getAttribute("data-i18n");
+    if (hasKey(k)) el.textContent = t(k);
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
-    el.placeholder = t(el.getAttribute("data-i18n-placeholder"));
+    const k = el.getAttribute("data-i18n-placeholder");
+    if (hasKey(k)) el.placeholder = t(k);
   });
   document.documentElement.lang = localStorage.getItem("quc_lang") || "ru";
 }
