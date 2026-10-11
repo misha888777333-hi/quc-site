@@ -22,7 +22,19 @@
   <p data-i18n="donate.intro"></p>
 
   <div class="card">
-    <h2 data-i18n="donate.how.title"></h2>
+    <h2 data-i18n="donate.quick.title"></h2>
+    <p data-i18n="donate.quick.text"></p>
+    <p><span data-i18n="donate.amount.label"></span>:</p>
+    <p><input id="custom" type="text" inputmode="decimal" autocomplete="off" data-i18n-placeholder="donate.amount.custom" style="max-width:220px;" /></p>
+    <p><button id="send" type="button" data-i18n="donate.send"></button></p>
+    <p id="status" style="font-size:14px; word-break:break-all;"></p>
+    <p id="nowallet" style="display:none; font-size:14px;"><span data-i18n="donate.nowallet"></span><br>
+      <a id="mmLink" data-i18n="donate.open.mm" href="#"></a> · <a id="trustLink" data-i18n="donate.open.trust" href="#"></a></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="donate.manual.title"></h2>
+    <h2 data-i18n="donate.how.title" style="font-size:1em;"></h2>
     <p data-i18n="donate.how.send"></p>
     <p><code id="addr" style="word-break:break-all;">0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58</code></p>
     <p><button id="copy" type="button" data-i18n="donate.copy"></button></p>
@@ -72,7 +84,7 @@ function render() {
   if (state.quc !== null) { set("poolQuc", fmt(state.quc, 0)); set("poolBnb", fmt(state.bnb, 6)); }
 }
 // вызывается из i18n.js при смене языка
-function onLanguageChanged() { render(); }
+function onLanguageChanged() { render(); if (statusKey) setStatus(statusKey, statusExtra); }
 
 document.getElementById("copy").onclick = () => {
   navigator.clipboard.writeText(DONATE).then(() => {
@@ -80,6 +92,53 @@ document.getElementById("copy").onclick = () => {
     b.textContent = t("donate.copied");
     setTimeout(() => { b.textContent = t("donate.copy"); }, 2000);
   });
+};
+
+// ---- пожертвование в один клик (простая отправка BNB; подтверждает сам человек в своём кошельке) ----
+const BSC = {chainId: "0x38", chainName: "BNB Smart Chain", nativeCurrency: {name: "BNB", symbol: "BNB", decimals: 18},
+  rpcUrls: ["https://bsc-dataseed.binance.org"], blockExplorerUrls: ["https://bscscan.com"]};
+let statusKey = null, statusExtra = "";
+const setStatus = (key, extra = "") => {
+  statusKey = key; statusExtra = extra;
+  const el = document.getElementById("status");
+  el.textContent = key ? t(key) + (extra ? " " : "") : "";
+  if (extra) {
+    const a = document.createElement("a");
+    a.href = "https://bscscan.com/tx/" + extra; a.target = "_blank"; a.rel = "noopener"; a.textContent = extra.slice(0, 10) + "…" + extra.slice(-6);
+    el.appendChild(a);
+  }
+};
+const parseWei = s => {  // "0.01" -> BigInt wei, без потери точности
+  s = s.trim().replace(",", ".");
+  if (!/^\d+(\.\d{1,18})?$/.test(s)) return null;
+  const [i, f = ""] = s.split(".");
+  const wei = BigInt(i) * 10n ** 18n + BigInt((f + "0".repeat(18)).slice(0, 18));
+  return wei > 0n ? wei : null;
+};
+const here = location.host + location.pathname;
+document.getElementById("mmLink").href = "https://metamask.app.link/dapp/" + here;
+document.getElementById("trustLink").href = "https://link.trustwallet.com/open_url?coin_id=20000714&url=" + encodeURIComponent(location.href.split("?")[0]);
+document.getElementById("send").onclick = async () => {
+  const wei = parseWei(document.getElementById("custom").value);
+  if (!wei) { setStatus("donate.st.badamount"); return; }
+  if (!window.ethereum) { setStatus(null); document.getElementById("nowallet").style.display = "block"; return; }
+  try {
+    setStatus("donate.st.connecting");
+    const [from] = await window.ethereum.request({method: "eth_requestAccounts"});
+    const cid = await window.ethereum.request({method: "eth_chainId"});
+    if (cid !== BSC.chainId) {
+      setStatus("donate.st.network");
+      try { await window.ethereum.request({method: "wallet_switchEthereumChain", params: [{chainId: BSC.chainId}]}); }
+      catch (e) {
+        if (e && e.code === 4902) await window.ethereum.request({method: "wallet_addEthereumChain", params: [BSC]});
+        else throw e;
+      }
+    }
+    setStatus("donate.st.confirm");
+    const hash = await window.ethereum.request({method: "eth_sendTransaction",
+      params: [{from, to: DONATE, value: "0x" + wei.toString(16)}]});
+    setStatus("donate.st.sent", hash);
+  } catch (e) { setStatus("donate.st.rejected"); }
 };
 
 (async () => {
