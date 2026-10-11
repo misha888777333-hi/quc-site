@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QUC — Support / Поддержать</title>
+<link rel="icon" type="image/jpeg" href="quc-coin-cosmic.jpg" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <a href="index.html" data-i18n="nav.home">Главная</a>
+    <a href="stake.html" data-i18n="nav.stake">Стейкинг</a>
+    <a href="mint.html" data-i18n="nav.mint">Минт NFT</a>
+    <a href="games.html" data-i18n="nav.games">Игры</a>
+    <a href="donate.html" class="active" aria-current="page" data-i18n="nav.donate">Поддержать</a>
+  </nav>
+
+  <h1 data-i18n="donate.title">Открытая копилка QUC</h1>
+  <p data-i18n="donate.intro"></p>
+
+  <div class="card">
+    <h2 data-i18n="donate.how.title"></h2>
+    <p data-i18n="donate.how.send"></p>
+    <p><code id="addr" style="word-break:break-all;">0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58</code></p>
+    <p><button id="copy" type="button" data-i18n="donate.copy"></button></p>
+    <p style="font-size:13px; opacity:.85;" data-i18n="donate.note"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="donate.live.title"></h2>
+    <p><span data-i18n="donate.bal"></span>: <b id="bal">—</b> BNB</p>
+    <p><span data-i18n="donate.pool"></span>: <b id="poolBnb">—</b> BNB <span data-i18n="donate.and"></span> <b id="poolQuc">—</b> QUC</p>
+    <p style="font-size:13px; opacity:.85;" data-i18n="donate.src"></p>
+  </div>
+
+  <div class="card">
+    <h2 data-i18n="donate.rules.title"></h2>
+    <ul>
+      <li data-i18n="donate.rule1"></li>
+      <li data-i18n="donate.rule2"></li>
+      <li data-i18n="donate.rule3"></li>
+      <li data-i18n="donate.rule4"></li>
+    </ul>
+    <p style="font-size:13px; opacity:.85;" data-i18n="donate.risk"></p>
+  </div>
+
+</div>
+
+<script src="i18n.js"></script>
+<script>
+const DONATE = "0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58";           // публичный адрес копилки (11.10.2026)
+const PAIR = "0x08239328707e9965c5b1d4e41b9ddc2f23aaf15c";             // PancakeSwap V2 QUC/WBNB
+const RPC = "https://bsc-dataseed.binance.org";
+let state = {bal: null, quc: null, bnb: null, fail: false};
+
+async function rpc(method, params) {
+  const r = await fetch(RPC, {method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({jsonrpc: "2.0", id: 1, method, params})});
+  return (await r.json()).result;
+}
+const hexToNum = (h, d = 18) => Number(BigInt(h)) / 10 ** d;
+const fmt = (x, n = 4) => x.toLocaleString(document.documentElement.lang || "ru", {maximumFractionDigits: n});
+
+function render() {
+  const set = (id, v) => { document.getElementById(id).textContent = v; };
+  if (state.fail) set("bal", t("donate.fail"));
+  else if (state.bal === null) set("bal", t("donate.noaddr"));
+  else set("bal", fmt(state.bal, 6));
+  if (state.quc !== null) { set("poolQuc", fmt(state.quc, 0)); set("poolBnb", fmt(state.bnb, 6)); }
+}
+// вызывается из i18n.js при смене языка
+function onLanguageChanged() { render(); }
+
+document.getElementById("copy").onclick = () => {
+  navigator.clipboard.writeText(DONATE).then(() => {
+    const b = document.getElementById("copy");
+    b.textContent = t("donate.copied");
+    setTimeout(() => { b.textContent = t("donate.copy"); }, 2000);
+  });
+};
+
+(async () => {
+  try {
+    if (DONATE.startsWith("0x")) state.bal = hexToNum(await rpc("eth_getBalance", [DONATE, "latest"]));
+    const res = await rpc("eth_call", [{to: PAIR, data: "0x0902f1ac"}, "latest"]);
+    state.quc = hexToNum("0x" + res.slice(2, 66));     // token0 = QUC
+    state.bnb = hexToNum("0x" + res.slice(66, 130));   // token1 = WBNB
+  } catch (e) { state.fail = true; }
+  render();
+})();
+</script>
+</body>
+</html>
