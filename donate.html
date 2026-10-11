@@ -77,7 +77,7 @@
 
 </div>
 
-<script src="i18n.js?v=20261011e"></script>
+<script src="i18n.js?v=20261011f"></script>
 <script>
 const DONATE = "0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58";           // публичный адрес копилки (11.10.2026)
 const PAIR = "0x08239328707e9965c5b1d4e41b9ddc2f23aaf15c";             // PancakeSwap V2 QUC/WBNB
@@ -189,7 +189,18 @@ async function sendDonation(eth, wei) {
   const hash = await eth.request({method: "eth_sendTransaction",
     params: [{from, to: DONATE, value: "0x" + wei.toString(16)}]});
   setStatus("donate.st.sent", hash);
+  [4000, 15000].forEach(ms => setTimeout(loadChain, ms));
 }
+
+// отказ пользователя (код 4001 / «reject») отличаем от потери связи: на телефоне браузер в фоне рвёт соединение,
+// хотя перевод мог пройти — тогда не пишем «отменено», а просим проверить баланс и обновляем его.
+function failStatus(e) {
+  const msg = String((e && (e.message || e)) || "").toLowerCase();
+  const refused = (e && (e.code === 4001 || e.code === "ACTION_REJECTED")) || /reject|denied|declin|cancel/.test(msg);
+  setStatus(refused ? "donate.st.rejected" : "donate.st.unknown");
+  if (!refused) [5000, 20000, 60000].forEach(ms => setTimeout(loadChain, ms));
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) loadChain(); });
 
 document.getElementById("send").onclick = async () => {
   const wei = parseWei(document.getElementById("custom").value);
@@ -199,7 +210,7 @@ document.getElementById("send").onclick = async () => {
     const eth = await chooseWallet();
     if (!eth) { setStatus("donate.st.nowallet"); return; }
     await sendDonation(eth, wei);
-  } catch (e) { setStatus("donate.st.rejected"); }
+  } catch (e) { failStatus(e); }
 };
 
 // ---- WalletConnect: любой кошелёк по QR-коду или через приложение на телефоне ----
@@ -228,19 +239,21 @@ document.getElementById("wcBtn").onclick = async () => {
     setStatus("donate.st.connecting");
     await wc.connect();            // открывает окно: QR-код / список кошельков
     await sendDonation(wc, wei);
-  } catch (e) { setStatus("donate.st.rejected"); }
+  } catch (e) { failStatus(e); }
   finally { try { if (wc && wc.session) await wc.disconnect(); } catch (_) {} }
 };
 
-(async () => {
+async function loadChain() {
   try {
+    state.fail = false;
     if (DONATE.startsWith("0x")) state.bal = hexToNum(await rpc("eth_getBalance", [DONATE, "latest"]));
     const res = await rpc("eth_call", [{to: PAIR, data: "0x0902f1ac"}, "latest"]);
     state.quc = hexToNum("0x" + res.slice(2, 66));     // token0 = QUC
     state.bnb = hexToNum("0x" + res.slice(66, 130));   // token1 = WBNB
   } catch (e) { state.fail = true; }
   render();
-})();
+}
+loadChain();
 </script>
 </body>
 </html>
