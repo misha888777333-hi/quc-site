@@ -6,6 +6,7 @@
 <title>QUC — Поддержать</title>
 <link rel="icon" type="image/jpeg" href="quc-coin-cosmic.jpg" />
 <link rel="stylesheet" href="style.css" />
+<style>.card p a, .card li a { color:#b7c3ff; text-decoration:underline; } .card p a:hover { color:#fff; }</style>
 </head>
 <body>
 <div class="wrap">
@@ -21,22 +22,36 @@
   <h1 data-i18n="donate.title">Открытая копилка QUC</h1>
   <p data-i18n="donate.intro"></p>
 
+  <!-- Способ 1: кошелёк, который есть в браузере (любой: MetaMask, Rabby, Trust, Coinbase, OKX…) -->
   <div class="card">
     <h2 data-i18n="donate.quick.title"></h2>
     <p data-i18n="donate.quick.text"></p>
     <p><span data-i18n="donate.amount.label"></span>:</p>
     <p><input id="custom" type="text" inputmode="decimal" autocomplete="off" data-i18n-placeholder="donate.amount.custom" style="max-width:220px;" /></p>
+    <div id="picker" style="display:none; margin:8px 0;">
+      <p><b data-i18n="donate.pick.title"></b></p>
+      <div id="pickerList" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
     <p><button id="send" type="button" data-i18n="donate.send"></button></p>
     <p id="status" style="font-size:14px; word-break:break-all;"></p>
-    <p id="nowallet" style="display:none; font-size:14px;"><span data-i18n="donate.nowallet"></span><br>
-      <a id="mmLink" data-i18n="donate.open.mm" href="#"></a> · <a id="trustLink" data-i18n="donate.open.trust" href="#"></a></p>
+    <p style="font-size:14px;"><span data-i18n="donate.apps"></span><br>
+      <a id="mmLink" data-i18n="donate.open.mm" href="#"></a> ·
+      <a id="trustLink" data-i18n="donate.open.trust" href="#"></a> ·
+      <a id="cbLink" data-i18n="donate.open.cb" href="#"></a> ·
+      <a id="okxLink" data-i18n="donate.open.okx" href="#"></a></p>
   </div>
 
+  <!-- Способ 2: любой другой кошелёк или биржа — вручную, по QR или адресу -->
   <div class="card">
-    <h2 data-i18n="donate.manual.title"></h2>
-    <h2 data-i18n="donate.how.title" style="font-size:1em;"></h2>
-    <p data-i18n="donate.how.send"></p>
-    <p><code id="addr" style="word-break:break-all;">0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58</code></p>
+    <h2 data-i18n="donate.other.title"></h2>
+    <ol>
+      <li data-i18n="donate.other.step1"></li>
+      <li data-i18n="donate.other.step2"></li>
+      <li data-i18n="donate.other.step3"></li>
+    </ol>
+    <p><img id="qr" src="donate-qr.png" width="200" height="200" alt="" style="background:#fff; padding:6px; border-radius:8px;" /></p>
+    <p><span data-i18n="donate.addr.label"></span><br>
+      <code id="addr" style="word-break:break-all;">0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58</code></p>
     <p><button id="copy" type="button" data-i18n="donate.copy"></button></p>
     <p style="font-size:13px; opacity:.85;" data-i18n="donate.note"></p>
   </div>
@@ -61,12 +76,13 @@
 
 </div>
 
-<script src="i18n.js?v=20261011b"></script>
+<script src="i18n.js?v=20261011c"></script>
 <script>
 const DONATE = "0x63eE6D1B1E7C732295BaB1eAE28b39Dc66eB4a58";           // публичный адрес копилки (11.10.2026)
 const PAIR = "0x08239328707e9965c5b1d4e41b9ddc2f23aaf15c";             // PancakeSwap V2 QUC/WBNB
 const RPC = "https://bsc-dataseed.binance.org";
 let state = {bal: null, quc: null, bnb: null, fail: false};
+let statusKey = null, statusExtra = "";
 
 async function rpc(method, params) {
   const r = await fetch(RPC, {method: "POST", headers: {"Content-Type": "application/json"},
@@ -84,8 +100,13 @@ function render() {
   if (state.quc !== null) { set("poolQuc", fmt(state.quc, 0)); set("poolBnb", fmt(state.bnb, 6)); }
 }
 // вызывается из i18n.js при смене языка
-function onLanguageChanged() { document.title = "QUC — " + t("nav.donate"); render(); if (statusKey) setStatus(statusKey, statusExtra); }
+function onLanguageChanged() {
+  document.title = "QUC — " + t("nav.donate");
+  document.getElementById("qr").alt = t("donate.qr.alt");
+  render(); if (statusKey) setStatus(statusKey, statusExtra);
+}
 document.title = "QUC — " + t("nav.donate");
+document.getElementById("qr").alt = t("donate.qr.alt");
 
 document.getElementById("copy").onclick = () => {
   navigator.clipboard.writeText(DONATE).then(() => {
@@ -95,10 +116,10 @@ document.getElementById("copy").onclick = () => {
   });
 };
 
-// ---- пожертвование в один клик (простая отправка BNB; подтверждает сам человек в своём кошельке) ----
+// ---- пожертвование в один клик: ЛЮБОЙ кошелёк, встроенный в браузер (EIP-6963 + запасной window.ethereum) ----
+// Деньги уходят из кошелька того, кто нажал кнопку, на адрес копилки; подтверждает перевод сам человек в своём кошельке.
 const BSC = {chainId: "0x38", chainName: "BNB Smart Chain", nativeCurrency: {name: "BNB", symbol: "BNB", decimals: 18},
   rpcUrls: ["https://bsc-dataseed.binance.org"], blockExplorerUrls: ["https://bscscan.com"]};
-let statusKey = null, statusExtra = "";
 const setStatus = (key, extra = "") => {
   statusKey = key; statusExtra = extra;
   const el = document.getElementById("status");
@@ -109,34 +130,66 @@ const setStatus = (key, extra = "") => {
     el.appendChild(a);
   }
 };
-const parseWei = s => {  // "0.01" -> BigInt wei, без потери точности
+const parseWei = s => {  // "0.01" -> BigInt wei, без потери точности; любая сумма больше нуля
   s = s.trim().replace(",", ".");
   if (!/^\d+(\.\d{1,18})?$/.test(s)) return null;
   const [i, f = ""] = s.split(".");
   const wei = BigInt(i) * 10n ** 18n + BigInt((f + "0".repeat(18)).slice(0, 18));
   return wei > 0n ? wei : null;
 };
-const here = location.host + location.pathname;
-document.getElementById("mmLink").href = "https://metamask.app.link/dapp/" + here;
-document.getElementById("trustLink").href = "https://link.trustwallet.com/open_url?coin_id=20000714&url=" + encodeURIComponent(location.href.split("?")[0]);
+
+// все кошельки-расширения, объявившиеся на странице
+const wallets = new Map();
+window.addEventListener("eip6963:announceProvider", e => { if (e.detail && e.detail.info) wallets.set(e.detail.info.uuid, e.detail); });
+window.dispatchEvent(new Event("eip6963:requestProvider"));
+
+function chooseWallet() {  // -> provider | null (если кошелька в браузере нет)
+  window.dispatchEvent(new Event("eip6963:requestProvider"));
+  const list = [...wallets.values()];
+  if (list.length === 0) return Promise.resolve(window.ethereum || null);
+  if (list.length === 1) return Promise.resolve(list[0].provider);
+  return new Promise(resolve => {  // несколько кошельков: пусть человек сам выберет
+    const box = document.getElementById("picker"), row = document.getElementById("pickerList");
+    row.textContent = "";
+    list.forEach(w => {
+      const b = document.createElement("button"); b.type = "button";
+      b.style.cssText = "display:flex; align-items:center; gap:8px;";
+      if (w.info.icon) { const im = document.createElement("img"); im.src = w.info.icon; im.width = 22; im.height = 22; im.alt = ""; b.appendChild(im); }
+      b.appendChild(document.createTextNode(w.info.name));
+      b.onclick = () => { box.style.display = "none"; resolve(w.provider); };
+      row.appendChild(b);
+    });
+    box.style.display = "block";
+  });
+}
+
+// ссылки «открыть эту страницу в приложении кошелька» (для телефона и тех, у кого нет расширения)
+const here = location.href.split("?")[0].split("#")[0];
+const hereNoProto = here.replace(/^https?:\/\//, "");
+document.getElementById("mmLink").href = "https://metamask.app.link/dapp/" + hereNoProto;
+document.getElementById("trustLink").href = "https://link.trustwallet.com/open_url?coin_id=20000714&url=" + encodeURIComponent(here);
+document.getElementById("cbLink").href = "https://go.cb-w.com/dapp?cb_url=" + encodeURIComponent(here);
+document.getElementById("okxLink").href = "okx://wallet/dapp/url?dappUrl=" + encodeURIComponent(here);
+
 document.getElementById("send").onclick = async () => {
   const wei = parseWei(document.getElementById("custom").value);
   if (!wei) { setStatus("donate.st.badamount"); return; }
-  if (!window.ethereum) { setStatus(null); document.getElementById("nowallet").style.display = "block"; return; }
   try {
     setStatus("donate.st.connecting");
-    const [from] = await window.ethereum.request({method: "eth_requestAccounts"});
-    const cid = await window.ethereum.request({method: "eth_chainId"});
+    const eth = await chooseWallet();
+    if (!eth) { setStatus("donate.st.nowallet"); return; }
+    const [from] = await eth.request({method: "eth_requestAccounts"});
+    const cid = await eth.request({method: "eth_chainId"});
     if (cid !== BSC.chainId) {
       setStatus("donate.st.network");
-      try { await window.ethereum.request({method: "wallet_switchEthereumChain", params: [{chainId: BSC.chainId}]}); }
+      try { await eth.request({method: "wallet_switchEthereumChain", params: [{chainId: BSC.chainId}]}); }
       catch (e) {
-        if (e && e.code === 4902) await window.ethereum.request({method: "wallet_addEthereumChain", params: [BSC]});
+        if (e && e.code === 4902) await eth.request({method: "wallet_addEthereumChain", params: [BSC]});
         else throw e;
       }
     }
     setStatus("donate.st.confirm");
-    const hash = await window.ethereum.request({method: "eth_sendTransaction",
+    const hash = await eth.request({method: "eth_sendTransaction",
       params: [{from, to: DONATE, value: "0x" + wei.toString(16)}]});
     setStatus("donate.st.sent", hash);
   } catch (e) { setStatus("donate.st.rejected"); }
